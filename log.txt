@@ -1,0 +1,58 @@
+Welcome to the CBC MILP Solver 
+Version: 2.9.7 
+Build Date: Oct 10 2015 
+Revision Number: 2226 
+
+command line - cbc.exe 13176-pulp.mps max threads 4 presolve on branch printingOptions all solution 13176-pulp.sol (default strategy 1)
+At line 2 NAME          MODEL
+At line 3 ROWS
+At line 1373 COLUMNS
+At line 6612 RHS
+At line 7981 BOUNDS
+At line 8144 ENDATA
+Problem MODEL has 1368 rows, 162 columns and 4860 elements
+Coin0008I MODEL read with 0 errors
+No match for threads - ? for list of commands
+No match for 4 - ? for list of commands
+Continuous objective value is 8 - 0.00 seconds
+Cgl0003I 0 fixed, 0 tightened bounds, 255 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 260 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 254 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 250 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 230 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 122 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 73 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 54 strengthened rows, 0 substitutions
+Cgl0003I 0 fixed, 0 tightened bounds, 33 strengthened rows, 0 substitutions
+Cgl0004I processed model has 1201 rows, 162 columns (162 integer (162 of which binary)) and 5130 elements
+Cutoff increment increased from 1e-005 to 0.9999
+Cbc0038I Initial state - 58 integers unsatisfied sum - 12.5556
+Cbc0038I Pass   1: suminf.    0.00000 (0) obj. -8 iterations 93
+Cbc0038I Solution found of -8
+Cbc0038I Before mini branch and bound, 102 integers at bound fixed and 0 continuous
+Cbc0038I Mini branch and bound did not improve solution (0.14 seconds)
+Cbc0038I After 0.14 seconds - Feasibility pump exiting with objective of -8 - took 0.01 seconds
+Cbc0012I Integer solution of -8 found by feasibility pump after 0 iterations and 0 nodes (0.14 seconds)
+Cbc0001I Search completed - best objective -8, took 0 iterations and 0 nodes (0.14 seconds)
+Cbc0035I Maximum depth 0, 0 variables fixed on reduced cost
+Cuts at root node changed objective from -8 to -8
+Probing was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+Gomory was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+Knapsack was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+Clique was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+MixedIntegerRounding2 was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+FlowCover was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+TwoMirCuts was tried 0 times and created 0 cuts of which 0 were active after adding rounds of cuts (0.000 seconds)
+
+Result - Optimal solution found
+
+Objective value:                8.00000000
+Enumerated nodes:               0
+Total iterations:               0
+Time (CPU seconds):             0.17
+Time (Wallclock seconds):       0.17
+
+Option for printingOptions changed from normal to all
+Total time (CPU seconds):       0.20   (Wallclock seconds):       0.20
+
+ 13176-pulp.mps max threads 4 presolve on branch printingOptions all solution 13176-pulp.sol 
