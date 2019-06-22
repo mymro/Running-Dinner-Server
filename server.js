@@ -9,18 +9,40 @@ const jwtMiddleware = require('./jwtMiddleware');
 const cookieParser = require('cookie-parser')
 const config = require('./config');
 const bcrypt = require('bcrypt');
-const saltRounds = 12;
 const initOptions = {/* initialization options */};
 monitor.attach(initOptions);
 const pgp = require('pg-promise')(initOptions);
+const pug = require('pug');
+const locale = require("locale")
 
+const supported_lang = ["de"];
+const default_lang = "de";
+
+const rudi_db = pgp({
+    host: 'localhost',
+    port: 5432,
+    database: 'rudi',
+    user: 'rudi_server',
+    password: '1234',
+    //ssl: true
+});
+
+const saltRounds = 12;
 const _baseDir = config.baseDir;
 const validExtensions = config.validExtensions;
+const translations = require('./language/de.json')
 
 var app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(jwtMiddleware.checkToken);
+app.use(locale(supported_lang, default_lang))
+app.use((req, res, next)=>{
+    res.locals = translations[req.locale]
+    next();
+})
+app.set('view engine', 'pug');
+app.set('views', "./files/views")
 
 let stream = fs.createWriteStream("./log.txt")
 
@@ -38,6 +60,33 @@ stream.on('open', ()=>{
 app.get("/", (req, res, next)=>{
     req.url = "/index.html";
     next();
+})
+
+app.get("/login", (req,res)=>{
+    res.render("login")
+})
+
+app.post("/user/create", (req,res)=>{
+    //TODO add sanity checks for user input
+    let email = req.body.email;
+    let phone = req.body.phone;
+    let password = req.body.password;
+    let first_name = req.body.first_name;
+    let last_name = req.body.last_name;
+    bcrypt.hash(password, saltRounds, (err, hash)=>{
+        if(err){
+            res.sendStatus(500);
+        }else{
+            rudi_db.none("INSERT INTO users (email, password, phone, first_name, last_name) " +
+                "VALUES ($1, $2, $3, $4, $5)", [email, hash, phone, first_name, last_name])
+            .then(()=>{
+                res.redirect("/");
+            }).catch(err=>{
+                console.log(err);
+                res.sendStatus(400);
+            })
+        }
+    })
 })
 
 app.post("/get_log", (req, res)=>{

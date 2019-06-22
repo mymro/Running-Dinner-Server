@@ -4,8 +4,7 @@
   "description": "A server for hosting a running dinner event",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js",
-    "start": "node server.js"
+    "debug": "nodemon --inspect server.js"
   },
   "author": "Constantin Budin",
   "license": "ISC",
@@ -18,10 +17,15 @@
     "express": "^4.17.1",
     "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
+    "locale": "^0.1.0",
     "pg-monitor": "^1.1.0",
-    "pg-promise": "^8.7.2"
+    "pg-promise": "^8.7.2",
+    "pug": "^2.0.4"
   },
-  "scripts":{
-	"debug": "nodemon --inspect server.js"
+  "nodemonConfig": {
+    "ignore": [
+      "/files/*",
+      "/views/*"
+    ]
   }
 }
