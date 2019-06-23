@@ -1,10 +1,10 @@
-function checkRegisterForm(){
-    let form = document.getElementById("register");
+import {rules, messages} from "./form_rules.js"
 
-    if(form["password"].value == form["repeat_password"].value
-        && form["email"].value != ""){
-        return true;
-    }else{
-        return false;
-    }
+window.onload = () =>{
+    let lang = document.getElementById("lang").innerText;
+    new window.JustValidate("#register", {
+        rules:rules,
+        colorWrong: 'red',
+        messages:messages[lang]
+    })
 }
