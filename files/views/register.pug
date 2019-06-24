@@ -5,36 +5,59 @@ link(rel='stylesheet', href='/css/materialize.css')
 div(style='display:none' id='lang') #{lang}
 
 mixin team_member(member)
-  div
-    div(class='input-field row')= forms[member]
+  div(class="section")
+    h5= forms[member]
     div(class='input-field row')
-      label(for='first_name_'+member) #{forms.first_name}
+      label(for='first_name_'+member)= forms.first_name
       input(type='text' id='first_name_'+member data-validate-field='first_name_'+member name='first_name_' + member)
     div(class='input-field row')
-      label(for='last_name_'+member) #{forms.last_name}
+      label(for='last_name_'+member)= forms.last_name
       input(type='text' id='last_name_'+member data-validate-field='last_name_'+member name='last_name_'+member)
     div(class='input-field row')
-      label(for='phone_'+member) #{forms.phone_number}
+      label(for='phone_'+member)= forms.phone_number
       input(type='tel' id='phone_'+member data-validate-field='phone_'+member name='phone_'+member)
     div(class='input-field row')
-      label(for='email_'+member) #{forms.email}
+      label(for='email_'+member)= forms.email
       input(type='text' id='email_'+member data-validate-field='email_'+member name='email_'+member)
 
 mixin course_select(name, label)
   div(class='input-field row')
     select(name=name id=name data-validate-field=name)
-      option(value="" selected disabled hidden) #{forms.please_select}
-      option(value="starter") #{forms.course_starter}
-      option(value="main") #{forms.course_main}
-      option(value="dessert") #{forms.course_dessert}
+      option(value="" selected disabled hidden)= forms.please_select
+      option(value="starter")= forms.course_starter
+      option(value="main")= forms.course_main
+      option(value="dessert")= forms.course_dessert
     label= label
 
 div(class="container")
-  form(action='/group/register' method='POST' id='register')
+  form(action='/team/register' method='POST' id='register')
+    div(class="section")
+      h5= forms.adress
+      div(class="input-field row")
+        label(for="street")= forms.street
+        input(type="text" id="street" data-validate-field="street" name="street")
+      div(class="input-field row")
+        label(for="doorbell")= forms.doorbell
+        input(type="text" id="doorbell" data-validate-field="doorbell" name="doorbell")
+      div(class="input-field row")
+        label(for="zip")= forms.zip
+        input(type="text" id="zip" data-validate-field="zip" name="zip")
+      div(class="input-field row")
+        label(for="city")= forms.city
+        input(type="text" id="city" data-validate-field="city" name="city")
+      div(class="input-field row" style="display:none")
+        label(for="country")= forms.country
+        input(type="text" id="country" data-validate-field="country" name="country" value="austria")
     +team_member('member_1')
     +team_member('member_2')
-    +course_select("preferred_course", forms.course_label_preferred)
-    +course_select("disliked_course", forms.course_label_disliked)
+    div(class="section")
+      h5= forms.preferences
+      +course_select("preferred_course", forms.course_label_preferred)
+      +course_select("disliked_course", forms.course_label_disliked)
+    div(class="section")
+      h5= forms.notes
+      div(class="input-field row")
+        textarea(name="notes" class="materialize-textarea" data-length="50" cols="50" rows="10")
     button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.register}
 
 script(src='/js/just-validate.js' type='application/javascript')

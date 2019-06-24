@@ -1,4 +1,24 @@
 export let rules = {
+    street:{
+        required:true,
+        minLength:1
+    },
+    doorbell:{
+        required:true,
+        minLength:1
+    },
+    zip:{
+        required:true,
+        minLength:1
+    },
+    city:{
+        required:true,
+        minLength:1
+    },
+    country:{
+        required:true,
+        minLength:1
+    },
     email_member_1:{
         required:true,
         email:true,
@@ -20,16 +40,20 @@ export let rules = {
         }
     },
     first_name_member_1:{
-        required:true
+        required:true,
+        minLength:1
     },
     first_name_member_2:{
-        required:true
+        required:true,
+        minLength:1
     },
     last_name_member_1:{
-        required:true
+        required:true,
+        minLength:1
     },
     last_name_member_2:{
-        required:true
+        required:true,
+        minLength:1
     },
     phone_member_1:{
         required:true,
@@ -53,6 +77,11 @@ export let rules = {
 
 export let messages={
     de:{
+        city:"Das Feld darf nicht leer sein.",
+        street:"Das Feld darf nicht leer sein.",
+        doorbell:"Das Feld darf nicht leer sein.",
+        zip:"Das Feld darf nicht leer sein.",
+        country:"Das Feld darf nicht leer sein.",
         first_name_member_1:"Das ist kein valider Name",
         first_name_member_2:"Das ist kein valider Name",
         last_name_member_1:"Das ist kein valider Name.",

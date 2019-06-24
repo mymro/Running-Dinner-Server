@@ -16,7 +16,15 @@ module.exports = {
             course_label_disliked:"Bitte wählt den Gang aus, den ihr a wenigsten gerne kochen würdet.",
             please_select:"Bitte auswählen",
             member_1:"Teammitglied 1",
-            member_2:"Teammitglied 2"
+            member_2:"Teammitglied 2",
+            adress:"Adresse",
+            city:"Stadt",
+            zip:"PLZ",
+            country:"Land",
+            doorbell:"Haus Nr./Türe",
+            street:"Straße",
+            preferences:"Kochpräferenzen",
+            notes:"Anmerkungen (z.B. Allergien, Unverträglichkeiten, ...)"
         }
     }
     

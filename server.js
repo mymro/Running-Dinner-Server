@@ -16,6 +16,7 @@ const pug = require('pug');
 const locale = require("locale");
 const translations = require('./lang');
 const validator = require('validator');
+const password_generator = require('generate-password');
 
 const supported_lang = ["de"];
 const default_lang = "de";
@@ -28,6 +29,12 @@ const rudi_db = pgp({
     password: '1234',
     //ssl: true
 });
+
+const courses = [
+    "starter",
+    "main",
+    "dessert"
+];
 
 const saltRounds = 12;
 const _baseDir = config.baseDir;
@@ -85,40 +92,57 @@ app.post("/user/exists", (req, res)=>{
     })
 })
 
-app.post("/group/register", (req,res)=>{
+app.post("/team/register", (req,res)=>{
     //''+ just to be sure they are all strings
-    let email_member_1 = ''+req.body.email_member_1;
-    let phone_member_1 = ''+req.body.phone_member_1;
-    let first_name_member_1 = ''+req.body.first_name_member_1;
-    let last_name_member_1 = ''+req.body.last_name_member_1;
-    let email_member_2 = ''+req.body.email_member_2;
-    let phone_member_2 = ''+req.body.phone_member_2;
-    let first_name_member_2 = ''+req.body.first_name_member_2;
-    let last_name_member_2 = ''+req.body.last_name_member_2;
+    let team = {}
+    team.street = ''+req.body.treet;
+    team.doorbell = ''+req.body.doorbell;
+    team.zip = ''+req.body.zip;
+    team.city = ''+req.body.city;
+    team.country = ''+req.body.country;
+    team.preferred_course = ''+req.body.preferred_course;
+    team.disliked_course = ''+req.body.disliked_course;
+    team.notes = ''+req.body.notes;
+    let member_1 = {}
+    member_1.email= ''+req.body.email_member_1;
+    member_1.phone = ''+req.body.phone_member_1;
+    member_1.first_name = ''+req.body.first_name_member_1;
+    member_1.last_name = ''+req.body.last_name_member_1;
+    member_1.password = password_generator.generate({length:5, numbers:true});
+    let member_2 ={}
+    member_2.email = ''+req.body.email_member_2;
+    member_2.phone = ''+req.body.phone_member_2;
+    member_2.first_name = ''+req.body.first_name_member_2;
+    member_2.last_name = ''+req.body.last_name_member_2;
+    member_2.password = password_generator.generate({length:5, numbers:true});
 
-    Promise.all(userExists(email_member_1), userExists(email_member_2))
+    //TODO more sophsticated testing
+    Promise.all([userExists(member_1.email), userExists(member_2.email)])
     .then(exists =>{
         if(!exists[0] && !exists[1]
-        && validator.isEmail(email_member_1) && validator.isEmail(email_member_2)
-        && validator.isMobilePhone(phone_member_1) && validator.isMobilePhone(phone_member_2)
-        && validator.isAlpha(first_name_member_1) && first_name_member_1.length > 0
-        && validator.isAlpha(first_name_member_2) && first_name_member_2.length > 0
-        && validator.isAlpha(last_name_member_1) && last_name_member_1.length > 0
-        && validator.isAlpha(last_name_member_2) && last_name_member_2.length > 0){
-
-            bcrypt.hash(password, saltRounds, (err, hash)=>{
-                if(err){
-                    return Promise.reject(new ServerError(500, "Hashing error"))
-                }else{
-                    return rudi_db.none("INSERT INTO users (email, password, phone, first_name, last_name) " +
-                        "VALUES ($1, $2, $3, $4, $5)", [email, hash, phone, first_name, last_name])
-                        .catch(err =>{
-                            throw(new ServerError(500, err.message))
-                        })
-                }
+        && team.street.length > 0
+        && team.doorbell.length > 0
+        && validator.isPostalCode(team.zip, 'AT')
+        && team.city.length > 0
+        && team.country.length > 0
+        && validator.isEmail(member_1.email) && validator.isEmail(member_2.email)
+        && validator.isMobilePhone(member_1.phone) && validator.isMobilePhone(member_2.phone)
+        && validator.isAlpha(member_1.first_name) && member_1.first_name.length > 0
+        && validator.isAlpha(member_2.first_name) && member_2.first_name.length > 0
+        && validator.isAlpha(member_1.last_name) && member_1.last_name.length > 0
+        && validator.isAlpha(member_2.last_name) && member_2.last_name.length > 0
+        && courses.includes(team.preferred_course) && courses.includes(team.disliked_course)
+        && team.preferred_course !== team.disliked_course){
+            return rudi_db.tx(t =>{
+                return t.one("INSERT INTO teams (street, doorbell, zip, city, country, preferred_course, disliked_course, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id", [team.street, team.doorbell, team.zip, team.city, team.country, team.preferred_course, team.disliked_course, team.notes])
+                .then(res =>{
+                    return t.batch([createUser(member_1, res.id, t), createUser(member_2, res.id, t)])
+                })
+            }).catch(err =>{
+                throw(new ServerError(500, err.message));
             })
         }else{
-            return Promise.reject(new ServerError(400, "Wrong user input"))
+            return Promise.reject(new ServerError(400, "Wrong user input"));
         }
     }).then(()=>{
         res.redirect("/");
@@ -159,6 +183,29 @@ function userExists(email){
         }
     }).catch(err =>{
         throw(new ServerError(500, err.message));
+    })
+}
+
+function createUser(user, team_id, transaction){
+    let connection;
+    if(transaction){
+        connection = transaction;
+    }else{
+        connection = rudi_db
+    }
+    return new Promise((resolve, reject)=>{
+        bcrypt.hash(user.password, saltRounds, (err, hash)=>{
+            if(err){
+                reject(new ServerError(500, err.message))
+            }else{
+                return connection.none("INSERT INTO users (email, phone, password, first_name, last_name, team) VALUES ($1, $2, $3, $4, $5, $6)", [user.email, user.phone, hash, user.first_name, user.last_name, team_id])
+                .then(()=>{
+                    resolve();
+                }).catch(err =>{
+                    reject(new ServerError(500, err.message))
+                })
+            }
+        })
     })
 }
 
