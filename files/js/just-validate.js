@@ -275,7 +275,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         RULE_ZIP = 'zip',
         RULE_PHONE = 'phone',
         RULE_REMOTE = 'remote',
-        RULE_STRENGTH = 'strength';
+        RULE_STRENGTH = 'strength',
+        RULE_FUNCTION = 'function';
 
     var formatParams = function formatParams(params, method) {
         if (typeof params === 'string') {
@@ -399,7 +400,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             minLength: 'The field must contain a minimum of :value characters',
             password: 'Password is not valid',
             remote: 'Email already exists',
-            strength: 'Password must contents at least one uppercase letter, one lowercase letter and one number'
+            strength: 'Password must contents at least one uppercase letter, one lowercase letter and one number',
+            function: 'Function returned false'
         },
         /**
          * Keyup handler
@@ -791,10 +793,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             for (var rule in rules) {
                 var ruleValue = rules[rule];
 
-                if (rule !== RULE_REQUIRED && value == '') {
+                if (rule !== RULE_REQUIRED && rule !== RULE_FUNCTION && value == '') {
                     return;
                 }
                 switch (rule) {
+                    case RULE_FUNCTION:{
+                            if(!ruleValue){
+                                break;
+                            }
+                            if(ruleValue(name, value)){
+                                break;
+                            }
+                            this.generateMessage(RULE_FUNCTION, name, ruleValue);
+                            return;
+                        }
                     case RULE_REQUIRED:
                         {
                             if (!ruleValue) {
@@ -994,7 +1006,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
                 div.innerHTML = message;
                 div.className = 'js-validate-error-label';
-                div.setAttribute('style', 'color: ' + this.colorWrong);
+                div.setAttribute('style', 'color:' + this.colorWrong + "; float:left");
                 $elem.style.border = '1px solid ' + this.colorWrong;
                 $elem.style.color = '' + this.colorWrong;
                 $elem.classList.add('js-validate-error-field');

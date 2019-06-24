@@ -8,8 +8,15 @@ module.exports = {
             first_name:"Vorname",
             last_name:"Nachname",
             phone_number:"Telefonnummer",
-            repeat_password:"Passwort wiederholen",
-            register:"Registrieren"
+            register:"Registrieren",
+            course_starter:"Vorspeise",
+            course_main:"Hauptspeise",
+            course_dessert:"Nachspeise",
+            course_label_preferred:"Bitte wählt den Gang aus, den ihr am liebsten kochen würdet.",
+            course_label_disliked:"Bitte wählt den Gang aus, den ihr a wenigsten gerne kochen würdet.",
+            please_select:"Bitte auswählen",
+            member_1:"Teammitglied 1",
+            member_2:"Teammitglied 2"
         }
     }
     

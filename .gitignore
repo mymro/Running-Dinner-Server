@@ -5,3 +5,5 @@ __pycache__/
 API-Key.txt
 log.txt
 *.csv
+files/sass/
+*.map

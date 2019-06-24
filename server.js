@@ -70,8 +70,8 @@ app.get("/", (req, res, next)=>{
     next();
 })
 
-app.get("/login", (req,res)=>{
-    res.render("login")
+app.get("/register", (req,res)=>{
+    res.render("register")
 })
 
 app.post("/user/exists", (req, res)=>{
@@ -85,36 +85,40 @@ app.post("/user/exists", (req, res)=>{
     })
 })
 
-app.post("/user/create", (req,res)=>{
+app.post("/group/register", (req,res)=>{
     //''+ just to be sure they are all strings
-    let email = ''+req.body.email;
-    let phone = ''+req.body.phone;
-    let password = ''+req.body.password;
-    let first_name = ''+req.body.first_name;
-    let last_name = ''+req.body.last_name;
+    let email_member_1 = ''+req.body.email_member_1;
+    let phone_member_1 = ''+req.body.phone_member_1;
+    let first_name_member_1 = ''+req.body.first_name_member_1;
+    let last_name_member_1 = ''+req.body.last_name_member_1;
+    let email_member_2 = ''+req.body.email_member_2;
+    let phone_member_2 = ''+req.body.phone_member_2;
+    let first_name_member_2 = ''+req.body.first_name_member_2;
+    let last_name_member_2 = ''+req.body.last_name_member_2;
 
-    userExists(email)
+    Promise.all(userExists(email_member_1), userExists(email_member_2))
     .then(exists =>{
-        if(!exists
-        && validator.isEmail(email)
-        && validator.isMobilePhone(phone)
-        && password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/)//min 8 characters 1 number one letter
-        && validator.isAlpha(first_name) && first_name.length > 0
-        && validator.isAlpha(last_name) && last_name.length > 0){
+        if(!exists[0] && !exists[1]
+        && validator.isEmail(email_member_1) && validator.isEmail(email_member_2)
+        && validator.isMobilePhone(phone_member_1) && validator.isMobilePhone(phone_member_2)
+        && validator.isAlpha(first_name_member_1) && first_name_member_1.length > 0
+        && validator.isAlpha(first_name_member_2) && first_name_member_2.length > 0
+        && validator.isAlpha(last_name_member_1) && last_name_member_1.length > 0
+        && validator.isAlpha(last_name_member_2) && last_name_member_2.length > 0){
 
             bcrypt.hash(password, saltRounds, (err, hash)=>{
                 if(err){
-                    return Promise.reject(ServerError(500, "Hashing error"))
+                    return Promise.reject(new ServerError(500, "Hashing error"))
                 }else{
                     return rudi_db.none("INSERT INTO users (email, password, phone, first_name, last_name) " +
                         "VALUES ($1, $2, $3, $4, $5)", [email, hash, phone, first_name, last_name])
                         .catch(err =>{
-                            throw(ServerError(500, err.message, err.fileName, err.lineNumber))
+                            throw(new ServerError(500, err.message))
                         })
                 }
             })
         }else{
-            return Promise.reject(ServerError(400, "Wrong user input"))
+            return Promise.reject(new ServerError(400, "Wrong user input"))
         }
     }).then(()=>{
         res.redirect("/");
@@ -140,7 +144,6 @@ app.use(function(req, res) {
 });
 
 var server = app.listen(3000, function () {
-    var host = server.address().address
     var port = server.address().port
     
     console.log("webserver: %s:%s",ip.address(), port)
@@ -155,7 +158,7 @@ function userExists(email){
             return Promise.resolve(false);
         }
     }).catch(err =>{
-        throw(ServerError(500, err.message, err.fileName, err.lineNumber));
+        throw(new ServerError(500, err.message));
     })
 }
 
@@ -176,7 +179,7 @@ function serveFile(relPathToFile, res){
         if(validExtensions[extension]){
             resolve(pathToFile);
         }else{
-            reject(ServerError(400, pathToFile + " has no valid extension"));
+            reject(new ServerError(400, pathToFile + " has no valid extension"));
         }
     })
  }
@@ -190,7 +193,7 @@ function serveFile(relPathToFile, res){
         })
         file_stream.on("error", err=>{
             file_stream.destroy();
-            reject(ServerError(500, err.message, err.fileName, err.lineNumber))
+            reject(new ServerError(500, err.message))
         })
      })
  }
@@ -207,7 +210,7 @@ function serveFile(relPathToFile, res){
         })
         file.stream.on("error", err=>{
             file.stream.destroy();
-            reject(ServerError(500, err.message, err.fileName, err.lineNumber))
+            reject(new ServerError(500, err.message))
         })
     });
 }

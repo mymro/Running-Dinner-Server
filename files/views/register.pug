@@ -1,0 +1,42 @@
+meta(charset='utf-8')
+meta(name='viewport' content='width=device-width,initial-scale=1')
+link(rel='stylesheet', href='/css/materialize.css')
+
+div(style='display:none' id='lang') #{lang}
+
+mixin team_member(member)
+  div
+    div(class='input-field row')= forms[member]
+    div(class='input-field row')
+      label(for='first_name_'+member) #{forms.first_name}
+      input(type='text' id='first_name_'+member data-validate-field='first_name_'+member name='first_name_' + member)
+    div(class='input-field row')
+      label(for='last_name_'+member) #{forms.last_name}
+      input(type='text' id='last_name_'+member data-validate-field='last_name_'+member name='last_name_'+member)
+    div(class='input-field row')
+      label(for='phone_'+member) #{forms.phone_number}
+      input(type='tel' id='phone_'+member data-validate-field='phone_'+member name='phone_'+member)
+    div(class='input-field row')
+      label(for='email_'+member) #{forms.email}
+      input(type='text' id='email_'+member data-validate-field='email_'+member name='email_'+member)
+
+mixin course_select(name, label)
+  div(class='input-field row')
+    select(name=name id=name data-validate-field=name)
+      option(value="" selected disabled hidden) #{forms.please_select}
+      option(value="starter") #{forms.course_starter}
+      option(value="main") #{forms.course_main}
+      option(value="dessert") #{forms.course_dessert}
+    label= label
+
+div(class="container")
+  form(action='/group/register' method='POST' id='register')
+    +team_member('member_1')
+    +team_member('member_2')
+    +course_select("preferred_course", forms.course_label_preferred)
+    +course_select("disliked_course", forms.course_label_disliked)
+    button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.register}
+
+script(src='/js/just-validate.js' type='application/javascript')
+script(src='/js/materialize.js' type='application/javascript')
+script(src='/js/form.js' type='module')
