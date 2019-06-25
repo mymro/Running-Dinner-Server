@@ -17,6 +17,8 @@ const locale = require("locale");
 const translations = require('./lang');
 const validator = require('validator');
 const password_generator = require('generate-password');
+const nodemailer = require('nodemailer');
+const smtp_auth = require('./gmailSecret')
 
 const supported_lang = ["de"];
 const default_lang = "de";
@@ -29,6 +31,21 @@ const rudi_db = pgp({
     password: '1234',
     //ssl: true
 });
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: smtp_auth,
+    secure: true,
+    logger: true,
+    debug:true,
+    pool: true
+   });
+
+var email_renderer = {
+    de:{
+        register:pug.compileFile("./files/mail_templates/de/register.pug")
+    }
+}
 
 const courses = [
     "starter",
@@ -77,73 +94,75 @@ app.get("/", (req, res, next)=>{
     next();
 })
 
-app.get("/register", (req,res)=>{
-    res.render("register")
+app.get("/register", (req, res)=>{
+    res.render("register", {country: config.countryString})
 })
 
-app.post("/user/exists", (req, res)=>{
-    let email = req.body.email;
-    userExists(email)
-    .then(exists =>{
-        res.send(exists)
-    }).catch(err=>{
-        console.error(err);
-        res.sendStatus(err.status_code);
-    })
+app.get("/confirm/email", (req, res)=>{
+    let token = req.query.token;
+    if(token){
+        jwt.verify(token, config.secret, (err, decoded)=>{
+            if(err){
+                res.send(err)
+            }else{
+                res.send(decoded)
+                rudi_db.none("UPDATE users SET email_confirmed = true WHERE email = $1", [decoded.email]);
+            }
+        })
+    }else{
+        res.send("missing token")
+    }
 })
 
 app.post("/team/register", (req,res)=>{
-    //''+ just to be sure they are all strings
-    let team = {}
-    team.street = ''+req.body.treet;
-    team.doorbell = ''+req.body.doorbell;
-    team.zip = ''+req.body.zip;
-    team.city = ''+req.body.city;
-    team.country = ''+req.body.country;
-    team.preferred_course = ''+req.body.preferred_course;
-    team.disliked_course = ''+req.body.disliked_course;
-    team.notes = ''+req.body.notes;
-    let member_1 = {}
-    member_1.email= ''+req.body.email_member_1;
-    member_1.phone = ''+req.body.phone_member_1;
-    member_1.first_name = ''+req.body.first_name_member_1;
-    member_1.last_name = ''+req.body.last_name_member_1;
-    member_1.password = password_generator.generate({length:5, numbers:true});
-    let member_2 ={}
-    member_2.email = ''+req.body.email_member_2;
-    member_2.phone = ''+req.body.phone_member_2;
-    member_2.first_name = ''+req.body.first_name_member_2;
-    member_2.last_name = ''+req.body.last_name_member_2;
-    member_2.password = password_generator.generate({length:5, numbers:true});
-
-    //TODO more sophsticated testing
-    Promise.all([userExists(member_1.email), userExists(member_2.email)])
-    .then(exists =>{
-        if(!exists[0] && !exists[1]
-        && team.street.length > 0
-        && team.doorbell.length > 0
-        && validator.isPostalCode(team.zip, 'AT')
-        && team.city.length > 0
-        && team.country.length > 0
-        && validator.isEmail(member_1.email) && validator.isEmail(member_2.email)
-        && validator.isMobilePhone(member_1.phone) && validator.isMobilePhone(member_2.phone)
-        && validator.isAlpha(member_1.first_name) && member_1.first_name.length > 0
-        && validator.isAlpha(member_2.first_name) && member_2.first_name.length > 0
-        && validator.isAlpha(member_1.last_name) && member_1.last_name.length > 0
-        && validator.isAlpha(member_2.last_name) && member_2.last_name.length > 0
-        && courses.includes(team.preferred_course) && courses.includes(team.disliked_course)
-        && team.preferred_course !== team.disliked_course){
-            return rudi_db.tx(t =>{
-                return t.one("INSERT INTO teams (street, doorbell, zip, city, country, preferred_course, disliked_course, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id", [team.street, team.doorbell, team.zip, team.city, team.country, team.preferred_course, team.disliked_course, team.notes])
-                .then(res =>{
-                    return t.batch([createUser(member_1, res.id, t), createUser(member_2, res.id, t)])
-                })
-            }).catch(err =>{
-                throw(new ServerError(500, err.message));
+    checkRegistrationData(getRegistrationData(req))
+    .then(data=>{
+        let team = data.team;
+        let member_1 = data.member_1;
+        let member_2 = data.member_2;
+        member_1.password = password_generator.generate({length:5, numbers:true});
+        member_2.password = password_generator.generate({length:5, numbers:true});
+        return rudi_db.tx(t =>{
+            return t.one("INSERT INTO teams (street, doorbell, zip, city, country, preferred_course, disliked_course, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id", [team.street, team.doorbell, team.zip, team.city, team.country, team.preferred_course, team.disliked_course, team.notes])
+            .then(res =>{
+                return t.batch([createUser(member_1, res.id, t), createUser(member_2, res.id, t), Promise.resolve({
+                    team:team,
+                    member_1:member_1,
+                    member_2:member_2
+                })])
             })
-        }else{
-            return Promise.reject(new ServerError(400, "Wrong user input"));
-        }
+        }).catch(err =>{
+            throw(new ServerError(500, err.message));
+        })
+    }).then((data)=>{
+        let member_1 = data[2].member_1;
+        let member_2 = data[2].member_2;
+
+        let promises = []
+        promises.push(sendMail({
+            to:member_1.email,
+            subject: res.locals.email.create_account_subject,
+            renderer: email_renderer[req.locale].register,
+            locals:{
+                user: member_1,
+                token: jwt.sign({email: member_1.email}, config.secret, {expiresIn: "2h"})
+            }
+        }));
+        promises.push(sendMail({
+            to:member_2.email,
+            subject: res.locals.email.create_account_subject,
+            renderer: email_renderer[req.locale].register,
+            locals:{
+                user: member_2,
+                token: jwt.sign({email: member_2.email}, config.secret, {expiresIn: "2h"})
+            }
+        }))
+
+        return Promise.all(promises)
+        .catch(err =>{
+            console.error(err);//if the error just happens after the users are created ignore it
+            return Promise.resolve();
+        });
     }).then(()=>{
         res.redirect("/");
     }).catch(err =>{
@@ -159,6 +178,37 @@ app.post("/get_log", (req, res)=>{
         console.error(err);
         res.sendStatus(err.status_code);
     })
+})
+
+app.post("/user/exists", (req, res)=>{
+    let email = req.body.email;
+    if(validator.isEmail(email)){
+        userExists(email)
+        .then(exists =>{
+            res.send(exists)
+        }).catch(err=>{
+            console.error(err);
+            res.sendStatus(err.status_code);
+        })
+    }else{
+        res.send("invalid")
+    }
+})
+
+app.post("/valid/phone", (req, res)=>{
+    if(validator.isMobilePhone(req.body.phone)){
+        res.send(true);
+    }else{
+        res.send(false);
+    }
+})
+
+app.post("/valid/zip", (req, res)=>{
+    if(validator.isPostalCode(req.body.zip, config.zipValidatorLocation)){
+        res.send(true);
+    }else{
+        res.send(false);
+    }
 })
 
 app.use(function(req, res) {
@@ -206,6 +256,117 @@ function createUser(user, team_id, transaction){
                 })
             }
         })
+    })
+}
+
+function sendMail(options){
+    let mailOptions = {
+        from: 'constantin.budin@gmail.com',
+        to: options.to,
+        subject: options.subject,
+        html: options.renderer(options.locals)
+        };
+    return transporter.sendMail(mailOptions)
+}
+
+function getRegistrationData(req){
+    let team = {}
+    team.street = ''+req.body.treet;
+    team.doorbell = ''+req.body.doorbell;
+    team.zip = ''+req.body.zip;
+    team.city = ''+req.body.city;
+    team.country = ''+req.body.country;
+    team.preferred_course = ''+req.body.preferred_course;
+    team.disliked_course = ''+req.body.disliked_course;
+    team.notes = ''+req.body.notes;
+    let member_1 = {}
+    member_1.email= ''+req.body.email_member_1;
+    member_1.phone = ''+req.body.phone_member_1;
+    member_1.first_name = ''+req.body.first_name_member_1;
+    member_1.last_name = ''+req.body.last_name_member_1;
+    let member_2 ={}
+    member_2.email = ''+req.body.email_member_2;
+    member_2.phone = ''+req.body.phone_member_2;
+    member_2.first_name = ''+req.body.first_name_member_2;
+    member_2.last_name = ''+req.body.last_name_member_2;
+    
+
+    return {
+        team: team, 
+        member_1:member_1,
+        member_2:member_2}
+}
+
+function checkRegistrationData(data){
+    let team = data.team;
+    let member_1 = data.member_1;
+    let member_2 = data.member_2;
+    return Promise.all([userExists(member_1.email), userExists(member_2.email)])
+    .then(exists =>{
+        if(exists[0]){
+            return Promise.reject(new ServerError(400, "email already exists: " + member_1.email));
+        }
+        if(exists[1]){
+            return Promise.reject(new ServerError(400, "email already exists: " + member_2.email));
+        }
+        if(member_1.email == member_2.email){
+            return Promise.reject(new ServerError(400, "The emails are the same"));
+        }
+        if(!validator.isEmail(member_1.email)){
+            return Promise.reject(new ServerError(400, "This is not a valid email: " + member_1.email));
+        }
+        if(!validator.isEmail(member_2.email)){
+            return Promise.reject(new ServerError(400, "This is not a valid email: " + member_2.email));
+        }
+        if(!validator.isPostalCode(team.zip, config.zipValidatorLocation)){
+            return Promise.reject(new ServerError(400, "Zip code is invalid: " + team.zip));
+        }
+        if(team.street.length <= 0){
+            return Promise.reject(new ServerError(400, "street is invalid: " + team.street));
+        }
+        if(team.doorbell.length <= 0){
+            return Promise.reject(new ServerError(400, "door_bell is invalid" + team.doorbell));
+        }
+        if(team.city.length <= 0){
+            return Promise.reject(new ServerError(400, "city is invalid" + team.city));
+        }
+        if(team.country.length <= 0){
+            return Promise.reject(new ServerError(400, "country is invalid" + team.country));
+        }
+        if(!validator.isMobilePhone(member_1.phone)){
+            return Promise.reject(new ServerError(400, "This is not a valid phone number" + member_1.phone));
+        }
+        if(!validator.isMobilePhone(member_2.phone)){
+            return Promise.reject(new ServerError(400, "This is not a valid phone number" + member_2.phone));
+        }
+        if(!validator.isAlpha(member_1.first_name) && member_1.first_name.length <= 0){
+            return Promise.reject(new ServerError(400, "This is not a valid name" + member_1.first_name));
+        }
+        if(!validator.isAlpha(member_1.last_name) && member_1.last_name.length <= 0){
+            return Promise.reject(new ServerError(400, "This is not a valid name" + member_1.last_name));
+        }
+        if(!validator.isAlpha(member_2.first_name) && member_2.first_name.length <= 0){
+            return Promise.reject(new ServerError(400, "This is not a valid name" + member_2.first_name));
+        }
+        if(!validator.isAlpha(member_2.last_name) && member_2.last_name.length <= 0){
+            return Promise.reject(new ServerError(400, "This is not a valid name" + member_2.last_name));
+        }
+        if(!courses.includes(team.preferred_course)){
+            return Promise.reject(new ServerError(400, "This is not a valid preferred course" + team.preferred_course));
+        }
+        if(!courses.includes(team.disliked_course)){
+            return Promise.reject(new ServerError(400, "This is not a valid disliked course" + team.disliked_course));
+        }
+        if(team.preferred_course == team.disliked_course){
+            return Promise.reject(new ServerError(400, "Preferred and disliked course are the same"));
+        }
+        return Promise.resolve(data);
+    }).catch(err =>{
+        if(err instanceof ServerError){
+            throw(err)
+        }else{
+            throw(new ServerError(500, err.message))
+        }
     })
 }
 

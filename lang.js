@@ -25,6 +25,9 @@ module.exports = {
             street:"Straße",
             preferences:"Kochpräferenzen",
             notes:"Anmerkungen (z.B. Allergien, Unverträglichkeiten, ...)"
+        },
+        email:{
+            create_account_subject:"Aktivierung deines Accounts und Passwort"
         }
     }
     

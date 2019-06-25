@@ -7,3 +7,4 @@ log.txt
 *.csv
 files/sass/
 *.map
+gmailSecret.js

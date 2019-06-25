@@ -11,4 +11,6 @@ module.exports = {
         //".map": "text/scss",
     },
     baseDir: "/files",
+    zipValidatorLocation: "AT",
+    countryString: "Austria"
   };
