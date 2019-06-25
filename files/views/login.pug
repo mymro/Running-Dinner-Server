@@ -1,0 +1,20 @@
+extends layout.pug
+
+block content
+    h5= forms.login
+    div(id="wrong_credentials" style="display:none")
+        p= text.login.wrong_credentials
+    div(id="oops" style="display:none")
+        p= text.something_went_wrong
+    form(action='/login' method='POST' id='login')
+        div(class="input-field row")
+            label(for="email")= forms.email
+            input(type="text" id="email" data-validate-field="email" name="email")
+        div(class="input-field row")
+            label(for="password")= forms.password
+            input(type="password" id="password" data-validate-field="password" name="password")
+        button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.login}
+
+block scripts
+    script(src='/js/just-validate.js' type='application/javascript')
+    script(src='/js/login.js' type='module')

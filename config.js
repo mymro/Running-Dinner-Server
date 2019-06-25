@@ -12,5 +12,7 @@ module.exports = {
     },
     baseDir: "/files",
     zipValidatorLocation: "AT",
-    countryString: "Austria"
+    countryString: "Austria",
+    passwordLength: 5,
+    saltRounds: 12,
   };

@@ -52,10 +52,6 @@ const courses = [
     "dessert"
 ];
 
-const saltRounds = 12;
-const _baseDir = config.baseDir;
-const validExtensions = config.validExtensions;
-
 class ServerError extends Error{
     constructor(status_code, message){
         super(message)
@@ -91,6 +87,10 @@ stream.on('open', ()=>{
 app.get("/", (req, res, next)=>{
     req.url = "/index.html";
     next();
+})
+
+app.get("/login", (req, res)=>{
+    res.render("login");
 })
 
 app.get("/register", (req, res)=>{
@@ -129,32 +129,92 @@ app.get("/confirm/email", (req, res)=>{
 })
 
 app.get("/request/new/confirmation", (req, res)=>{
-    res.render("request_new_confirmation");
+    console.log(req.query.redirect === "login");
+    if(req.query.redirect === "login"){
+        res.render("request_new_confirmation", {redirect:"login"})
+    }else{
+        res.render("request_new_confirmation");
+    }
 })
 
 app.get("/new/confirmation/sent", (req, res)=>{
     res.render("new_confirmation_sent");
 })
 
+app.post("/login", (req, res)=>{
+    let email = '' + req.body.email;
+    let password = '' + req.body.password;
+    
+    if(validator.isEmail(email) && password.length == config.passwordLength){
+
+        rudi_db.oneOrNone("SELECT * FROM users WHERE email = $1", email)
+        .then(row =>{
+            if(row){
+                return new Promise((resolve, reject)=>{
+                    bcrypt.compare(password, row.password, (err, result) =>{
+                        if(err){
+                            reject(new ServerError(500, err.message));
+                        }else if(!result){
+                            reject(new ServerError(400, "password does not match"))
+                        }else{
+                            resolve(row)
+                        }
+                    })
+                })
+            }else {
+                throw(new ServerError(400, "The user does not exist: " + email));
+            }
+        }).then(row =>{
+            if(row.email_confirmed){
+                res.cookie("auth", jwt.sign({user: row.id}, config.secret, {expiresIn: "1h"}));
+                res.json({
+                    "redirect":"/"
+                })
+            }else{
+                res.json({
+                    "redirect":"/request/new/confirmation?redirect=login"
+                })
+            }
+        }).catch(err =>{
+            console.error(err)
+            if(err instanceof ServerError){
+                res.sendStatus(err.status_code);
+            }else{
+                res.sendStatus(500);
+            }
+        })
+    }else{
+        console.error("email and password are not valid")
+        res.sendStatus(400);
+    }
+})
+
 app.post("/request/new/confirmation", (req, res)=>{
     let email = '' + req.body.email;
     if(validator.isEmail(email)){
-        rudi_db.one("SELECT * FROM users WHERE email = $1 AND email_confirmed = false", email)
+        rudi_db.oneOrNone("SELECT * FROM users WHERE email = $1 AND email_confirmed = false", email)
         .then(row =>{
-            console.log(row);
-            return sendMail({
-                to: row.email,
-                subject: res.locals.email.resend_confirmation_subject,
-                renderer: email_renderer[req.locale].resend_confirmation,
-                locals: {
-                    token: jwt.sign({email: email, first_name: row.first_name}, config.secret, {expiresIn: "24h"})
-                }
-            })
+            if(row){
+                return sendMail({
+                    to: row.email,
+                    subject: res.locals.email.resend_confirmation_subject,
+                    renderer: email_renderer[req.locale].resend_confirmation,
+                    locals: {
+                        token: jwt.sign({email: email, first_name: row.first_name}, config.secret, {expiresIn: "24h"})
+                    }
+                })
+            }else{
+                throw(new ServerError(400, "This email does not exist or it has already been confirmed."))
+            }
         }).then(()=>{
             res.redirect('/new/confirmation/sent')
         }).catch(err=>{
             console.error(err);
-            res.sendStatus(500);
+            if(err instanceof ServerError){
+                res.sendStatus(err.status_code);
+            }else{
+                res.sendStatus(500);
+            }
         }) 
     }else{
         console.error(email + " is not an email");
@@ -168,8 +228,8 @@ app.post("/team/register", (req,res)=>{
         let team = data.team;
         let member_1 = data.member_1;
         let member_2 = data.member_2;
-        member_1.password = password_generator.generate({length:5, numbers:true});
-        member_2.password = password_generator.generate({length:5, numbers:true});
+        member_1.password = password_generator.generate({length:config.passwordLength, numbers:true});
+        member_2.password = password_generator.generate({length:config.passwordLength, numbers:true});
         return rudi_db.tx(t =>{
             return t.one("INSERT INTO teams (street, doorbell, zip, city, country, preferred_course, disliked_course, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id", [team.street, team.doorbell, team.zip, team.city, team.country, team.preferred_course, team.disliked_course, team.notes])
             .then(res =>{
@@ -311,7 +371,7 @@ function createUser(user, team_id, transaction){
         connection = rudi_db
     }
     return new Promise((resolve, reject)=>{
-        bcrypt.hash(user.password, saltRounds, (err, hash)=>{
+        bcrypt.hash(user.password, config.saltRounds, (err, hash)=>{
             if(err){
                 reject(new ServerError(500, err.message))
             }else{
@@ -438,7 +498,7 @@ function checkRegistrationData(data){
 }
 
 function serveFile(relPathToFile, res){
-    checkValidExtension(__dirname + _baseDir + relPathToFile)
+    checkValidExtension(__dirname + config.baseDir + relPathToFile)
         .then(readFile)
         .then(data => sendData(data, res))
         .catch(err =>{
@@ -451,7 +511,7 @@ function serveFile(relPathToFile, res){
  function checkValidExtension(pathToFile){
     return new Promise((resolve, reject)=>{
         let extension = path.extname(pathToFile);
-        if(validExtensions[extension]){
+        if(config.validExtensions[extension]){
             resolve(pathToFile);
         }else{
             reject(new ServerError(400, pathToFile + " has no valid extension"));
@@ -464,7 +524,7 @@ function serveFile(relPathToFile, res){
         let file_stream = fs.createReadStream(pathToFile);
         let extension = path.extname(pathToFile);
         file_stream.on("open", ()=>{
-            resolve({stream: file_stream, contentType: validExtensions[extension]});
+            resolve({stream: file_stream, contentType: config.validExtensions[extension]});
         })
         file_stream.on("error", err=>{
             file_stream.destroy();

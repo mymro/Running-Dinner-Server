@@ -26,11 +26,11 @@
     "validator": "^11.0.0"
   },
   "nodemonConfig": {
+	"ext":"pug js json",
     "ignore": [
-		"./files/js/*",
-		"./files/css/*",
-		"./files/views/*"
-    ],
-	"ext":"pug js json"
+		"files/js/*",
+		"files/css/*",
+		"files/views/*"
+    ]
   }
 }

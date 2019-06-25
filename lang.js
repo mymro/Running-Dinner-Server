@@ -25,7 +25,7 @@ module.exports = {
             street:"Straße",
             preferences:"Kochpräferenzen",
             notes:"Anmerkungen (z.B. Allergien, Unverträglichkeiten, ...)",
-            send:"Absenden"
+            send:"Absenden",
         },
         email:{
             create_account_subject:"Aktivierung deines Accounts und Passwort",
@@ -40,19 +40,25 @@ module.exports = {
             request_new_confirmation_label:'Neue Bestätigungsmail anfordern'
         },
         text:{
+            something_went_wrong:"Es gab einen Fehler. Bitte probiere es später nocheinmal.",
             registration_complete:{
-                thanks:"Danke, dass du dich für das running dinner Event angemeldet hast. Ihr werdet in den nächsten Minuten eine Email bekommen mit einem Bestätigungslink.",
+                thanks:"Danke, dass ihr euch für das running dinner Event angemeldet habt. Ihr werdet in den nächsten Minuten eine Email bekommen mit einem Bestätigungslink und einem Passwort zum einloggen.",
                 disclaimer:"Eure Teilnahme ist erst bestätigt, wenn mindestens einer von euch seine Email mit dem zugesandten Link bestätigt.",
                 request_new_confirmation_text:'Sollte die email nicht ankommen, könnt ihr Mit dem unten stehenden Link eine neue Bestätigungsmail anfordern',
             },
             email_confirmed:{
                 confirmed:"Deine Email wurde bestätigt. Du kannst dich ab sofort über die Hauptseite einloggen.",
-                update_err:"Es gab einen Fehler in der Datenbak. Bitte probiere es später nocheinmal.",
                 invalid_token:"Der Aktivierungslink ist leider nicht gültig. Du kannst dir unten einen neuen zuschicken lassen.",
                 already_verified_or_does_not_exist:"Die Email wurde bereits aktiviert oder existiert nicht in der Datenbank."
             },
             new_confirmation_sent:"Ein neuer Bestätigungslink wurde an die angegebene Email gesendet.",
-            request_new_confirmation:"Bitte gib eine Email an für die du einen neuen Bestätigungslink haben möchtest."
+            request_new_confirmation:{
+                normal:"Bitte gib eine Email an für die du einen neuen Bestätigungslink haben möchtest.",
+                not_confirmed:"Deine Email Wurde leider noch nicht bestätigt. Bevor du dich einloggen kannst musst du deine Email bestätigen. Den dafür notwendigen Link kanns du unten anfragen."
+            },
+            login:{
+                wrong_credentials:"Die Zugangsdaten waren falsch oder ein Nutzer mit dieser Email existiert nicht."
+            }
         }
     }
     

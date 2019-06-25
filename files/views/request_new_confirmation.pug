@@ -2,7 +2,10 @@ extends layout.pug
 
 block content
     div(class="row")
-        p= text.request_new_confirmation
+        if redirect === "login"
+            p= text.request_new_confirmation.not_confirmed
+        else
+            p= text.request_new_confirmation.normal
     div(class="row")
         form(action='/request/new/confirmation' method='POST' id='confirmation')
             div(class='input-field row')
@@ -11,5 +14,5 @@ block content
             button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.send}
 
 block scripts            
-    script(src='/js/just-validate.min.js' type='application/javascript')
+    script(src='/js/just-validate.js' type='application/javascript')
     script(src='/js/request_new_confirmation.js' type='module')

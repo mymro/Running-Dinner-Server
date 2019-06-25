@@ -27,7 +27,6 @@ export let rules = {
     },
     email_member_1:{
         required:true,
-        email:true,
         function: null, //set later
         remote:{
             url: '/user/exists',
@@ -38,7 +37,6 @@ export let rules = {
     },
     email_member_2:{
         required:true,
-        email:true,
         function: null, //set later
         remote:{
             url: '/user/exists',
@@ -86,6 +84,9 @@ export let rules = {
     },
     disliked_course:{
         function:null//set later in javascript
+    },
+    notes:{
+        maxLength: 50
     }
 }
 
@@ -115,6 +116,7 @@ export let messages={
         phone_member_1:"Das ist keine valide Telefonnummer.",
         phone_member_2:"Das ist keine valide Telefonnummer.",
         disliked_course:"Bitte wähle zwei verschieden Gänge",
-        preferred_course:"Bitte wähle zwei verschieden Gänge"
+        preferred_course:"Bitte wähle zwei verschieden Gänge",
+        notes:"Die Anmerkungen dürfen maximal 50 Zeichen lang sein."
     }
 }

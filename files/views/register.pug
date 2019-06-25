@@ -53,9 +53,9 @@ block content
     div(class="section")
       h5= forms.notes
       div(class="input-field row")
-        textarea(name="notes" class="materialize-textarea" data-length="50" cols="50" rows="10")
+        textarea(name="notes" class="materialize-textarea", data-validate-field="notes" data-length="50")
     button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.register}
 
 block scripts
-  script(src='/js/just-validate.min.js' type='application/javascript')
+  script(src='/js/just-validate.js' type='application/javascript')
   script(src='/js/register.js' type='module')
