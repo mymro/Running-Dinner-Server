@@ -1,0 +1,10 @@
+meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+meta(name='viewport' content='width=device-width,initial-scale=1')
+
+p Lieber/Liebe #{first_name},
+p 
+    | anbei übermittlen wir dir deinen neuen 
+    a(href=`http://localhost:3000/confirm/email?token=${token}`) Registrierungslink 
+    | oder kopiere   
+p http://localhost:3000/confirm/email?token=#{token} 
+p in deinen Webbrowser.

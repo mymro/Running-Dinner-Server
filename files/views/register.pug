@@ -1,8 +1,4 @@
-meta(charset='utf-8')
-meta(name='viewport' content='width=device-width,initial-scale=1')
-link(rel='stylesheet', href='/css/materialize.css')
-
-div(style='display:none' id='lang') #{lang}
+extends layout.pug
 
 mixin team_member(member)
   div(class="section")
@@ -29,7 +25,7 @@ mixin course_select(name, label)
       option(value="dessert")= forms.course_dessert
     label= label
 
-div(class="container")
+block content
   form(action='/team/register' method='POST' id='register')
     div(class="section")
       h5= forms.adress
@@ -60,6 +56,6 @@ div(class="container")
         textarea(name="notes" class="materialize-textarea" data-length="50" cols="50" rows="10")
     button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.register}
 
-script(src='/js/just-validate.js' type='application/javascript')
-script(src='/js/materialize.js' type='application/javascript')
-script(src='/js/form.js' type='module')
+block scripts
+  script(src='/js/just-validate.min.js' type='application/javascript')
+  script(src='/js/register.js' type='module')

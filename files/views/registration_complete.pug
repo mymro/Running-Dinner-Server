@@ -1,0 +1,10 @@
+extends layout.pug
+
+block content
+    div(class="row")
+        div(class="row s12")
+            p= text.registration_complete.thanks
+            p= text.registration_complete.disclaimer
+            p= text.registration_complete.request_new_confirmation_text
+        div(class="row s12 center")
+            a(class="waves-effect waves-light btn" href="/request/new/confirmation")= buttons.request_new_confirmation_label

@@ -36,14 +36,13 @@ var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: smtp_auth,
     secure: true,
-    logger: true,
-    debug:true,
     pool: true
    });
 
 var email_renderer = {
     de:{
-        register:pug.compileFile("./files/mail_templates/de/register.pug")
+        register:pug.compileFile("./files/mail_templates/de/register.pug"),
+        resend_confirmation:pug.compileFile("./files/mail_templates/de/confirmation.pug")
     }
 }
 
@@ -58,8 +57,8 @@ const _baseDir = config.baseDir;
 const validExtensions = config.validExtensions;
 
 class ServerError extends Error{
-    constructor(status_code, message, fileName, lineNumber){
-        super(message, fileName, lineNumber)
+    constructor(status_code, message){
+        super(message)
         this.status_code = status_code
     }
 }
@@ -100,17 +99,66 @@ app.get("/register", (req, res)=>{
 
 app.get("/confirm/email", (req, res)=>{
     let token = req.query.token;
-    if(token){
+    let locals = {}
+    new Promise((resolve, reject)=>{
         jwt.verify(token, config.secret, (err, decoded)=>{
             if(err){
-                res.send(err)
+                locals.invalid_token = true
+                reject(err)
             }else{
-                res.send(decoded)
-                rudi_db.none("UPDATE users SET email_confirmed = true WHERE email = $1", [decoded.email]);
+                resolve(decoded)
             }
         })
+    }).then(decoded =>{
+        return rudi_db.one("SELECT * FROM users WHERE email = $1 and email_confirmed = false", [decoded.email])
+        .catch(err =>{
+            locals.already_verified_or_does_not_exist = true;
+            throw(err);
+        })
+    }).then(row=>{
+        return rudi_db.none("UPDATE users SET email_confirmed = true WHERE email = $1", [row.email])
+        .catch(err =>{
+            locals.err_when_update = true;
+            throw(err);
+        }) 
+    }).catch(err =>{
+        console.err(err)
+    }).finally(()=>{
+        res.render("email_confirmed", locals)
+    })  
+})
+
+app.get("/request/new/confirmation", (req, res)=>{
+    res.render("request_new_confirmation");
+})
+
+app.get("/new/confirmation/sent", (req, res)=>{
+    res.render("new_confirmation_sent");
+})
+
+app.post("/request/new/confirmation", (req, res)=>{
+    let email = '' + req.body.email;
+    if(validator.isEmail(email)){
+        rudi_db.one("SELECT * FROM users WHERE email = $1 AND email_confirmed = false", email)
+        .then(row =>{
+            console.log(row);
+            return sendMail({
+                to: row.email,
+                subject: res.locals.email.resend_confirmation_subject,
+                renderer: email_renderer[req.locale].resend_confirmation,
+                locals: {
+                    token: jwt.sign({email: email, first_name: row.first_name}, config.secret, {expiresIn: "24h"})
+                }
+            })
+        }).then(()=>{
+            res.redirect('/new/confirmation/sent')
+        }).catch(err=>{
+            console.error(err);
+            res.sendStatus(500);
+        }) 
     }else{
-        res.send("missing token")
+        console.error(email + " is not an email");
+        res.sendStatus(400);
     }
 })
 
@@ -145,7 +193,7 @@ app.post("/team/register", (req,res)=>{
             renderer: email_renderer[req.locale].register,
             locals:{
                 user: member_1,
-                token: jwt.sign({email: member_1.email}, config.secret, {expiresIn: "2h"})
+                token: jwt.sign({email: member_1.email}, config.secret, {expiresIn: "24h"})
             }
         }));
         promises.push(sendMail({
@@ -154,7 +202,7 @@ app.post("/team/register", (req,res)=>{
             renderer: email_renderer[req.locale].register,
             locals:{
                 user: member_2,
-                token: jwt.sign({email: member_2.email}, config.secret, {expiresIn: "2h"})
+                token: jwt.sign({email: member_2.email}, config.secret, {expiresIn: "24h"})
             }
         }))
 
@@ -164,11 +212,15 @@ app.post("/team/register", (req,res)=>{
             return Promise.resolve();
         });
     }).then(()=>{
-        res.redirect("/");
+        res.redirect("/registration/complete");
     }).catch(err =>{
         console.error(err);
         res.sendStatus(err.status_code);
     })
+})
+
+app.get("/registration/complete", (req, res)=>{
+    res.render("registration_complete");
 })
 
 app.post("/get_log", (req, res)=>{
@@ -178,6 +230,21 @@ app.post("/get_log", (req, res)=>{
         console.error(err);
         res.sendStatus(err.status_code);
     })
+})
+
+app.post("/user/email/unconfirmed", (req, res)=>{
+    let email = req.body.email;
+    if(validator.isEmail(email)){
+        rudi_db.one("SELECT * FROM users WHERE email = $1 AND email_confirmed = false", email)
+        .then(()=>{
+            res.send(true);
+        }).catch((err)=>{
+            console.error(err)
+            res.send(false);
+        })
+    }else{
+        res.send("invalid")
+    }
 })
 
 app.post("/user/exists", (req, res)=>{

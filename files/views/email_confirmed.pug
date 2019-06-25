@@ -1,0 +1,17 @@
+extends layout.pug
+
+block content
+    div(class="row")
+        div(class="col s12")
+            if invalid_token
+                p= text.email_confirmed.invalid_token
+            else if already_verified_or_does_not_exist
+                p= text.email_confirmed.already_verified_or_does_not_exist
+            else if err_when_update
+                p= text.email_confirmed.update_err
+            else
+                p= text.email_confirmed.confirmed
+        if invalid_token
+            div(class="row")
+                div(class="col s12 center")
+                    a(class="waves-effect waves-light btn" href="/request/new/confirmation")= buttons.request_new_confirmation_label

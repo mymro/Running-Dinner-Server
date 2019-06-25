@@ -8,7 +8,8 @@
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
-		"M": true
+    "M": true,
+    "layout":true
     },
     "parserOptions": {
 		"sourceType": "module",

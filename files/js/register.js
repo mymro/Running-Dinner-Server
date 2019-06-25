@@ -1,15 +1,9 @@
-import {rules, messages} from "./form_rules.js"
+import {rules, messages} from "./form_rules/register_rules.js"
 document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll(".materialize-textarea");
-    M.CharacterCounter.init(elems);
-    elems = document.querySelectorAll("select")
-    M.FormSelect.init(elems);
-
-    let lang = document.getElementById("lang").innerText;
 
     let course_selects = {}
-    course_selects.preferred = document.getElementById("preferred_course");
-    course_selects.disliked = document.getElementById("disliked_course");
+    course_selects.preferred = layout.selects[0].el;
+    course_selects.disliked = layout.selects[1].el;
     let course_check_function = checkCourses(course_selects);
     rules.disliked_course.function = course_check_function;
     rules.preferred_course.function = course_check_function;
@@ -24,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new window.JustValidate("#register", {
         rules:rules,
         colorWrong: 'red',
-        messages:messages[lang]
+        messages:messages[layout.lang]
     })
   });
 
