@@ -1,0 +1,7 @@
+.log-box{
+    @extend .z-depth-1;
+    width: 100%;
+    float: left;
+    overflow: auto;
+    min-height: 4em;
+}
