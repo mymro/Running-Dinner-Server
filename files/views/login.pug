@@ -1,6 +1,9 @@
 extends layout.pug
 
 block content
+    div(class="row")
+        if redirect == 'new_password'
+            p= text.login.check_emails_for_password
     h5= forms.login
     div(id="wrong_credentials" style="display:none")
         p= text.login.wrong_credentials
@@ -14,6 +17,9 @@ block content
             label(for="password")= forms.password
             input(type="password" id="password" data-validate-field="password" name="password")
         button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.login}
+    div(class="row , s12")
+        a(href="/register" class="col s3 m2 l")= forms.register
+        a(href="/forgot/password" class="col s6 m4 l3")= forms.forgot_password
 
 block scripts
     script(src='/js/just-validate.js' type='application/javascript')

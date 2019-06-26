@@ -15,23 +15,37 @@ html
           ul(class="left hide-on-med-and-down")
             li
               a(href='/')= menu.home
-            li
-              a(href='/login')= menu.login
-            li
-              a(href='/register')= menu.register
+            if authenticated
+              li
+                a(href='/' onclick="logout()")= menu.logout
+              li
+                a(href='#')= menu.console
+            else
+              li
+                a(href='/login')= menu.login
+              li
+                if settings.reg_open == 'true'
+                  a(href='/register')= menu.register
 
     ul(class="sidenav" id="sidenav")
       li
         a(href='/')= menu.home
-      li
-        a(href='/login')= menu.login
-      li
-        a(href='/register')= menu.register
+      if authenticated
+        li
+          a(href='/' onclick="logout()")= menu.logout
+        li
+          a(href='#')= menu.console
+      else
+        li
+          a(href='/login')= menu.login
+        li
+          if settings.reg_open == 'true'
+            a(href='/register')= menu.register
 
     div(style='display:none' id='lang') #{lang}
     div(class="container")
       block content
 
     script(src='/js/materialize.min.js' type='application/javascript')
-    script(src='/js/layout_init.js' type='application/javascript')
+    script(src='/js/main.js' type='application/javascript')
     block scripts

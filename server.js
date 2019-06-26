@@ -5,7 +5,7 @@ const ip = require('ip');
 const spawn = require('child_process');
 const monitor = require('pg-monitor');
 const jwt = require('jsonwebtoken');
-const jwtMiddleware = require('./jwtMiddleware');
+const middleware = require('./middleware');
 const cookieParser = require('cookie-parser')
 const config = require('./config');
 const bcrypt = require('bcrypt');
@@ -13,15 +13,11 @@ const initOptions = {/* initialization options */};
 monitor.attach(initOptions);
 const pgp = require('pg-promise')(initOptions);
 const pug = require('pug');
-const locale = require("locale");
-const translations = require('./lang');
 const validator = require('validator');
 const password_generator = require('generate-password');
 const nodemailer = require('nodemailer');
 const smtp_auth = require('./gmailSecret')
-
-const supported_lang = ["de"];
-const default_lang = "de";
+const settings = require('./settings');
 
 const rudi_db = pgp({
     host: 'localhost',
@@ -42,7 +38,8 @@ var transporter = nodemailer.createTransport({
 var email_renderer = {
     de:{
         register:pug.compileFile("./files/mail_templates/de/register.pug"),
-        resend_confirmation:pug.compileFile("./files/mail_templates/de/confirmation.pug")
+        resend_confirmation:pug.compileFile("./files/mail_templates/de/confirmation.pug"),
+        new_password:pug.compileFile("./files/mail_templates/de/new_password.pug")
     }
 }
 
@@ -59,20 +56,16 @@ class ServerError extends Error{
     }
 }
 
+let settings_helper = new settings.SettingsHelper(rudi_db);
+
 var app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
-app.use(jwtMiddleware.checkToken);
-app.use(locale(supported_lang, default_lang))
-app.use((req, res, next)=>{
-    res.locals = translations[req.locale]
-    next();
-})
 app.set('view engine', 'pug');
 app.set('views', "./files/views")
+middleware.setUpMiddleware(app, settings_helper);
 
 let stream = fs.createWriteStream("./log.txt")
-
 stream.on('open', ()=>{
     let python = spawn.spawn("python", ["test.py"], {
     stdio: [ 'pipe', stream, stream]});
@@ -85,16 +78,24 @@ stream.on('open', ()=>{
 })
 
 app.get("/", (req, res, next)=>{
-    req.url = "/index.html";
-    next();
+    res.render("home");
 })
 
 app.get("/login", (req, res)=>{
-    res.render("login");
+    let redirect = req.query.redirect
+    res.render("login", {redirect: redirect});
+})
+
+app.get("/forgot/password", (req, res)=>{
+    res.render("forgot_password")
 })
 
 app.get("/register", (req, res)=>{
-    res.render("register", {country: config.countryString})
+    if(res.locals.settings.reg_open == 'true'){
+        res.render("register", {country: config.countryString})
+    }else{
+        res.sendStatus(403);
+    }
 })
 
 app.get("/confirm/email", (req, res)=>{
@@ -129,11 +130,10 @@ app.get("/confirm/email", (req, res)=>{
 })
 
 app.get("/request/new/confirmation", (req, res)=>{
-    console.log(req.query.redirect === "login");
     if(req.query.redirect === "login"){
-        res.render("request_new_confirmation", {redirect:"login"})
+        res.render("request_new_confirmation", {redirect:"login", email: req.query.email})
     }else{
-        res.render("request_new_confirmation");
+        res.render("request_new_confirmation", {email: ''});
     }
 })
 
@@ -147,7 +147,7 @@ app.post("/login", (req, res)=>{
     
     if(validator.isEmail(email) && password.length == config.passwordLength){
 
-        rudi_db.oneOrNone("SELECT * FROM users WHERE email = $1", email)
+        rudi_db.oneOrNone("SELECT users.id, users.email, users.password, users.email_confirmed, roles.role FROM users LEFT OUTER JOIN roles on (users.id = roles.id) WHERE users.email = $1", email)
         .then(row =>{
             if(row){
                 return new Promise((resolve, reject)=>{
@@ -166,13 +166,13 @@ app.post("/login", (req, res)=>{
             }
         }).then(row =>{
             if(row.email_confirmed){
-                res.cookie("auth", jwt.sign({user: row.id}, config.secret, {expiresIn: "1h"}));
+                res.cookie("auth", jwt.sign({user: row.id, role: row.role}, config.secret, {expiresIn: "1h"}));
                 res.json({
                     "redirect":"/"
                 })
             }else{
                 res.json({
-                    "redirect":"/request/new/confirmation?redirect=login"
+                    "redirect": `/request/new/confirmation?redirect=login&email=${row.email}`
                 })
             }
         }).catch(err =>{
@@ -195,14 +195,12 @@ app.post("/request/new/confirmation", (req, res)=>{
         rudi_db.oneOrNone("SELECT * FROM users WHERE email = $1 AND email_confirmed = false", email)
         .then(row =>{
             if(row){
-                return sendMail({
-                    to: row.email,
-                    subject: res.locals.email.resend_confirmation_subject,
-                    renderer: email_renderer[req.locale].resend_confirmation,
-                    locals: {
-                        token: jwt.sign({email: email, first_name: row.first_name}, config.secret, {expiresIn: "24h"})
-                    }
-                })
+                return sendMail(row.email,
+                    res.locals.email.resend_confirmation_subject,
+                    email_renderer[req.locale].resend_confirmation,
+                    {
+                        token: jwt.sign({email: email}, config.secret, {expiresIn: "24h"})
+                    })
             }else{
                 throw(new ServerError(400, "This email does not exist or it has already been confirmed."))
             }
@@ -222,7 +220,54 @@ app.post("/request/new/confirmation", (req, res)=>{
     }
 })
 
+app.post("/request/new/password", (req, res)=>{
+    let email =  ''+req.body.email;
+
+    if(validator.isEmail(email)){
+        let new_password = password_generator.generate({length:config.passwordLength, numbers:true});
+        new Promise((resolve, reject)=>{
+            bcrypt.hash(new_password, config.saltRounds, (err, hash)=>{
+                if(err){
+                    reject(new ServerError(500, err.message));
+                }else{
+                    resolve(hash);
+                }
+            })
+        }).then(hash =>{
+            return rudi_db.one("UPDATE users SET password = $1 WHERE email = $2 RETURNING *", [hash, email])
+                    .catch(err =>{
+                        throw(new ServerError(500, err.message));
+                    })
+        }).then(row =>{
+            return sendMail(
+                row.email,
+                res.locals.email.request_new_password_subject,
+                email_renderer[req.locale].new_password,
+                {
+                    first_name: row.first_name,
+                    password: new_password,
+                    email: row.email,
+                    email_confirmed: row.email_confirmed,
+                    token: jwt.sign({email: row.email}, config.secret, {expiresIn: "24h"})
+                }
+            )
+        }).then(()=>{
+            res.redirect("/login?redirect=new_password");
+        }).catch(err =>{
+            console.error(err);
+            res.sendStatus(err.status_code);
+        })
+    }else{
+        res.sendStatus(500);
+    }
+})
+
 app.post("/team/register", (req,res)=>{
+    if(res.locals.settings.reg_open != "true"){
+        res.sendStatus(403);
+        return;
+    }
+
     checkRegistrationData(getRegistrationData(req))
     .then(data=>{
         let team = data.team;
@@ -247,24 +292,28 @@ app.post("/team/register", (req,res)=>{
         let member_2 = data[2].member_2;
 
         let promises = []
-        promises.push(sendMail({
-            to:member_1.email,
-            subject: res.locals.email.create_account_subject,
-            renderer: email_renderer[req.locale].register,
-            locals:{
-                user: member_1,
+        promises.push(sendMail(
+            member_1.email,
+            res.locals.email.create_account_subject,
+            email_renderer[req.locale].register,
+            {
+                email: member_1.email,
+                first_name: member_1.first_name,
+                password: member_1.password,
                 token: jwt.sign({email: member_1.email}, config.secret, {expiresIn: "24h"})
             }
-        }));
-        promises.push(sendMail({
-            to:member_2.email,
-            subject: res.locals.email.create_account_subject,
-            renderer: email_renderer[req.locale].register,
-            locals:{
-                user: member_2,
+        ));
+        promises.push(sendMail(
+            member_2.email,
+            res.locals.email.create_account_subject,
+            email_renderer[req.locale].register,
+            {
+                email: member_2.email,
+                first_name: member_2.first_name,
+                password: member_2.password,
                 token: jwt.sign({email: member_2.email}, config.secret, {expiresIn: "24h"})
             }
-        }))
+        ))
 
         return Promise.all(promises)
         .catch(err =>{
@@ -344,11 +393,16 @@ app.use(function(req, res) {
     serveFile(req.path, res);
 });
 
-var server = app.listen(3000, function () {
-    var port = server.address().port
-    
-    console.log("webserver: %s:%s",ip.address(), port)
- })
+settings_helper.initSettings()//first get all the settings, then start the server.
+.then(()=>{
+    var server = app.listen(3000, function () {
+        var port = server.address().port
+        console.log("webserver: %s:%s",ip.address(), port)
+    })
+}).catch(err =>{
+    console.error(err)
+    process.exit(1);
+})
 
 function userExists(email){
     return rudi_db.oneOrNone("SELECT * FROM users WHERE email = $1", email)
@@ -386,14 +440,18 @@ function createUser(user, team_id, transaction){
     })
 }
 
-function sendMail(options){
+function sendMail(to, subject, renderer, locals){
+    locals.base_url = config.baseUrl;
     let mailOptions = {
         from: 'constantin.budin@gmail.com',
-        to: options.to,
-        subject: options.subject,
-        html: options.renderer(options.locals)
+        to: to,
+        subject: subject,
+        html: renderer(locals)
         };
     return transporter.sendMail(mailOptions)
+            .catch(err =>{
+                throw(new ServerError(500, err.message));
+            })
 }
 
 function getRegistrationData(req){

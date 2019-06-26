@@ -1,15 +1,15 @@
 meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
 meta(name='viewport' content='width=device-width,initial-scale=1')
 
-p Lieber/Liebe #{user.first_name},
+p Lieber/Liebe #{first_name},
 p 
     | vielen Dank, dass du dich für das Running Dinner Event am 12.12.2012 angemeldet hast. Um deine Anmeldung zu vervollständigen klicke bitte auf den volgenden Link 
-    a(href=`http://localhost:3000/confirm/email?token=${token}`) hier 
+    a(href=`${base_url}/confirm/email?token=${token}`) hier 
     | oder kopiere   
-p http://localhost:3000/confirm/email?token=#{token} 
+p #{base_url}/confirm/email?token=#{token} 
 p in deinen Webbrowser. 
 p Nachdem du die Anmeldung vervollständigt hast kannst du dich mit den folgenden Daten anmelden:
     ul 
-        li Email: #{user.email}
-        li Passwort: #{user.password}
+        li Email: #{email}
+        li Passwort: #{password}
 

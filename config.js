@@ -15,4 +15,5 @@ module.exports = {
     countryString: "Austria",
     passwordLength: 5,
     saltRounds: 12,
+    baseUrl:"http://localhost:3000"
   };

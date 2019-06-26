@@ -10,7 +10,7 @@ block content
         form(action='/request/new/confirmation' method='POST' id='confirmation')
             div(class='input-field row')
                 label(for='email')= forms.email
-                input(type='text' id='email' data-validate-field='email' name='email')
+                input(type='text' id='email' data-validate-field='email' name='email', value=`${email}`)
             button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.send}
 
 block scripts            

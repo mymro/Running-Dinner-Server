@@ -26,15 +26,19 @@ module.exports = {
             preferences:"Kochpräferenzen",
             notes:"Anmerkungen (z.B. Allergien, Unverträglichkeiten, ...)",
             send:"Absenden",
+            forgot_password:"Passwort vergessen"
         },
         email:{
             create_account_subject:"Aktivierung deines Accounts und Passwort",
-            resend_confirmation_subject:"Neuer Aktivierungslink"
+            resend_confirmation_subject:"Neuer Aktivierungslink",
+            request_new_password_subject:"Neues Passwort"
         },
         menu:{
             login:"Einloggen",
             register:"Registrieren",
-            home:"Hauptseite"
+            home:"Hauptseite",
+            logout:"Ausloggen",
+            console:"Mein Account"
         },
         buttons:{
             request_new_confirmation_label:'Neue Bestätigungsmail anfordern'
@@ -57,7 +61,8 @@ module.exports = {
                 not_confirmed:"Deine Email Wurde leider noch nicht bestätigt. Bevor du dich einloggen kannst musst du deine Email bestätigen. Den dafür notwendigen Link kanns du unten anfragen."
             },
             login:{
-                wrong_credentials:"Die Zugangsdaten waren falsch oder ein Nutzer mit dieser Email existiert nicht."
+                wrong_credentials:"Die Zugangsdaten waren falsch oder ein Nutzer mit dieser Email existiert nicht.",
+                check_emails_for_password:"Ein neues Passwort wurde dir an die angegebene Emailadresse geschickt. Bitte überprüfe deinen Posteingang."
             }
         }
     }
