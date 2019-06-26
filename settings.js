@@ -1,3 +1,5 @@
+const ServerError = require('./server_error')
+
 class SettingsHelper{
     constructor(db){
       this.db = db;
@@ -9,8 +11,10 @@ class SettingsHelper{
       .then(rows =>{
         rows.forEach(row => {
           this.settings[row.name] = row.data;
-        });
-      })
+        })
+      }).catch(err =>{
+        throw(new ServerError(500, err.message));
+      });
     }
 
     getMiddleware(){
@@ -19,6 +23,16 @@ class SettingsHelper{
             res.locals.settings = object.settings;
             next();
         }
+    }
+
+    changeSettings(settings){
+      return this.db.tx(async t=>{
+        for(let key in settings){
+          await t.none("UPDATE settings set data = $1 WHERE name = $2", [settings[key].toString(), key.toString()])
+        }
+      }).catch(err =>{
+        throw(new ServerError(500, err.message));
+      })
     }
   }
 

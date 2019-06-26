@@ -1,0 +1,39 @@
+extends layout
+
+block content
+    p(class="row" id="timed_out" style="display:none")= text.session_timed_out
+    div(class="row")
+        div(class="row")
+            h5(class="left")= menu.settings
+        form(clas="row" id="settings")
+            div(class="row")
+                p
+                    label
+                        if settings.reg_open == 'true'
+                            input(type="checkbox" name="settings[reg_open]" data-validate-field="reg_open" checked='checked')
+                        else
+                            input(type="checkbox" name="settings[reg_open]" data-validate-field="reg_open" checked='unchecked')
+                        span= text.admin.settings.reg_open
+            div(class="row valign-wrapper")
+                div(class="col s2")
+                    button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.save}
+                label(class="col s10 valign-wrapper" id="saved" style="display:none")= text.admin.saved
+                label(class="col s10 valign-wrapper" id="not_saved" style="display:none")= text.admin.not_saved
+                label(class="col s10 valign-wrapper" id="helper" style="display:block")
+
+    div(class="row")
+        h5(class="left")= text.admin.routing
+    p(calss="row")= text.admin.disclaimer
+    div(class="row")
+            div(class="col")
+                button(class="btn waves-effect waves-light" onclick="startRouting()") #{text.admin.start_routing}
+    div(class="row")
+        p= text.admin.log
+        div(class="log-box" id="log")
+    
+        
+
+block scripts
+  script(src='/js/just-validate.js' type='application/javascript')
+  script(src='/js/admin.js' type='module')
+

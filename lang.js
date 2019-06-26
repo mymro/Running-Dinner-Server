@@ -26,7 +26,8 @@ module.exports = {
             preferences:"Kochpräferenzen",
             notes:"Anmerkungen (z.B. Allergien, Unverträglichkeiten, ...)",
             send:"Absenden",
-            forgot_password:"Passwort vergessen"
+            forgot_password:"Passwort vergessen",
+            save:"Speichern"
         },
         email:{
             create_account_subject:"Aktivierung deines Accounts und Passwort",
@@ -38,13 +39,16 @@ module.exports = {
             register:"Registrieren",
             home:"Hauptseite",
             logout:"Ausloggen",
-            console:"Mein Account"
+            console:"Mein Account",
+            admin:"Admin",
+            settings:"Einstellungen"
         },
         buttons:{
             request_new_confirmation_label:'Neue Bestätigungsmail anfordern'
         },
         text:{
             something_went_wrong:"Es gab einen Fehler. Bitte probiere es später nocheinmal.",
+            session_timed_out:"Deine Sitzung ist abgelaufen. Bitte logge dich nocheinmal ein.",
             registration_complete:{
                 thanks:"Danke, dass ihr euch für das running dinner Event angemeldet habt. Ihr werdet in den nächsten Minuten eine Email bekommen mit einem Bestätigungslink und einem Passwort zum einloggen.",
                 disclaimer:"Eure Teilnahme ist erst bestätigt, wenn mindestens einer von euch seine Email mit dem zugesandten Link bestätigt.",
@@ -63,6 +67,17 @@ module.exports = {
             login:{
                 wrong_credentials:"Die Zugangsdaten waren falsch oder ein Nutzer mit dieser Email existiert nicht.",
                 check_emails_for_password:"Ein neues Passwort wurde dir an die angegebene Emailadresse geschickt. Bitte überprüfe deinen Posteingang."
+            },
+            admin:{
+                settings:{
+                    reg_open:"Personen dürfen sich registrieren"
+                },
+                saved:"Gespeichert",
+                not_saved:"Die Änderungen wurden nicht gespeichert. Etwas ist schief gelaufen.",
+                routing:"Routen erstellen",
+                log:"Routingprogramm Logoutput:",
+                start_routing:"Den Routingprozess starten",
+                disclaimer:"Bevor du den Routingprozess startest solltest du dich vergewissern, dass sich keine neuen teams mehr anmelden und ihre Daten ändern können (siehe oben unter Einstellungen)."
             }
         }
     }

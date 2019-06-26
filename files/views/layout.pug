@@ -3,7 +3,7 @@ html
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width,initial-scale=1')
     link(href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet')
-    link(rel='stylesheet', href='/css/materialize.css')
+    link(rel='stylesheet', href='/css/style.css')
     title #{page_title}
   body
     div(class="navbar-fixed")
@@ -18,8 +18,12 @@ html
             if authenticated
               li
                 a(href='/' onclick="logout()")= menu.logout
-              li
-                a(href='#')= menu.console
+              if token.role == 'admin'
+                li 
+                  a(href="/admin")= menu.admin
+              else
+                li
+                  a(href='#')= menu.console
             else
               li
                 a(href='/login')= menu.login
@@ -33,8 +37,12 @@ html
       if authenticated
         li
           a(href='/' onclick="logout()")= menu.logout
-        li
-          a(href='#')= menu.console
+        if token.role == 'admin'
+          li 
+            a(href="/admin")= menu.admin
+        else
+          li
+            a(href='#')= menu.console
       else
         li
           a(href='/login')= menu.login

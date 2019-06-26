@@ -18,6 +18,7 @@ const password_generator = require('generate-password');
 const nodemailer = require('nodemailer');
 const smtp_auth = require('./gmailSecret')
 const settings = require('./settings');
+const ServerError = require('./server_error');
 
 const rudi_db = pgp({
     host: 'localhost',
@@ -49,12 +50,9 @@ const courses = [
     "dessert"
 ];
 
-class ServerError extends Error{
-    constructor(status_code, message){
-        super(message)
-        this.status_code = status_code
-    }
-}
+const roles = {
+    admin: 'admin',
+};
 
 let settings_helper = new settings.SettingsHelper(rudi_db);
 
@@ -65,19 +63,7 @@ app.set('view engine', 'pug');
 app.set('views', "./files/views")
 middleware.setUpMiddleware(app, settings_helper);
 
-let stream = fs.createWriteStream("./log.txt")
-stream.on('open', ()=>{
-    let python = spawn.spawn("python", ["test.py"], {
-    stdio: [ 'pipe', stream, stream]});
-    
-    python.unref()
-      
-    python.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-      });
-})
-
-app.get("/", (req, res, next)=>{
+app.get("/", (req, res)=>{
     res.render("home");
 })
 
@@ -141,13 +127,27 @@ app.get("/new/confirmation/sent", (req, res)=>{
     res.render("new_confirmation_sent");
 })
 
+app.get("/admin", (req, res)=>{
+    if(res.locals.authenticated && res.locals.token.role == roles.admin){
+        res.render("admin");
+    }else{
+        res.status(401);
+        res.redirect('/');
+    }
+    
+})
+
+app.get("/registration/complete", (req, res)=>{
+    res.render("registration_complete");
+})
+
 app.post("/login", (req, res)=>{
     let email = '' + req.body.email;
     let password = '' + req.body.password;
     
     if(validator.isEmail(email) && password.length == config.passwordLength){
 
-        rudi_db.oneOrNone("SELECT users.id, users.email, users.password, users.email_confirmed, roles.role FROM users LEFT OUTER JOIN roles on (users.id = roles.id) WHERE users.email = $1", email)
+        rudi_db.oneOrNone("SELECT users.id, users.email, users.team, users.password, users.email_confirmed, roles.role FROM users LEFT OUTER JOIN roles on (users.id = roles.id) WHERE users.email = $1", email)
         .then(row =>{
             if(row){
                 return new Promise((resolve, reject)=>{
@@ -166,10 +166,16 @@ app.post("/login", (req, res)=>{
             }
         }).then(row =>{
             if(row.email_confirmed){
-                res.cookie("auth", jwt.sign({user: row.id, role: row.role}, config.secret, {expiresIn: "1h"}));
-                res.json({
-                    "redirect":"/"
-                })
+                res.cookie("auth", jwt.sign({user: row.id, role: row.role, team: row.team}, config.secret, {expiresIn: "1h"}));
+                if(row.role == roles.admin){
+                    res.json({
+                        "redirect":"/admin"
+                    })
+                }else{
+                    res.json({
+                        "redirect":"/"
+                    })
+                }
             }else{
                 res.json({
                     "redirect": `/request/new/confirmation?redirect=login&email=${row.email}`
@@ -328,10 +334,6 @@ app.post("/team/register", (req,res)=>{
     })
 })
 
-app.get("/registration/complete", (req, res)=>{
-    res.render("registration_complete");
-})
-
 app.post("/get_log", (req, res)=>{
     readFile("./log.txt")
     .then(file => sendData(file, res))
@@ -368,6 +370,37 @@ app.post("/user/exists", (req, res)=>{
         })
     }else{
         res.send("invalid")
+    }
+})
+
+app.post("/change/settings", (req, res)=>{
+    if(res.locals.authenticated){
+        settings_helper.changeSettings(req.body.settings)
+        .then(()=>{
+            res.sendStatus(200);
+        }).catch(err =>{
+            console.error(err);
+            res.sendStatus(err.status_code);
+        })
+    }else{
+        res.sendStatus(401);
+    }
+})
+
+app.post("/start/routing", (req, res)=>{
+    if(res.locals.authenticated){
+        let stream = fs.createWriteStream("./log.txt")
+        stream.on('open', ()=>{
+            let python = spawn.spawn("python", ["test.py"], {
+            stdio: [ 'pipe', stream, stream]});
+            python.unref();
+            python.on('close', (code) => {
+                console.log(`child process exited with code ${code}`);
+            });
+        })
+        res.sendStatus(200);
+    }else{
+        res.sendStatus(401);
     }
 })
 
