@@ -1,9 +1,14 @@
 module.exports = {
     de:{
         lang:"de",
+        email_confirmed:"Email bestätigt",
+        team:"Team",
+        preferred_course:"Bevorzugter Gang",
+        disliked_course:"nicht Bevorzugter Gang",
+        saved:"Gespeichert",
+        not_saved:"Die Änderungen wurden nicht gespeichert.",
         forms:{
             email:"Email",
-            email_confirmed:"Email bestätigt",
             password:"Passwort",
             login:"Einloggen",
             first_name:"Vorname",
@@ -73,8 +78,6 @@ module.exports = {
                 settings:{
                     reg_open:"Personen dürfen sich registrieren"
                 },
-                saved:"Gespeichert",
-                not_saved:"Die Änderungen wurden nicht gespeichert. Etwas ist schief gelaufen.",
                 routing:"Routen erstellen",
                 log:"Routingprogramm Logoutput:",
                 start_routing:"Den Routingprozess starten",

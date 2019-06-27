@@ -10,7 +10,8 @@
         "SharedArrayBuffer": "readonly",
     "M": true,
     "layout":true,
-	"Tabulator":true
+	"Tabulator":true,
+	"columns":true
     },
     "parserOptions": {
 		"sourceType": "module",

@@ -52,18 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var table = new Tabulator("#users", {
         height:"500",
         layout:"fitColumns",
-        columns:[
-            {title:"Email Confirmed", field:"email_confirmed", sorter:"boolean", formatter:"tickCross"},
-            {title:"First Name", field:"first_name", sorter:"string"},
-            {title:"Last Name", field:"last_name", sorter:"string"},
-            {title:"Email", field:"email", sorter:"string"},
-            {title:"Phone", field:"phone", sorter:"string"},
-            {title:"Team", field:"team", sorter:"number", align:"left"},
-            {title:"Street", field:"street", sorter:"string"},
-            {title:"Doorbell", field:"doorbell", sorter:"string"},
-            {title:"City", field:"city", sorter:"string"},
-            {title:"zip", field:"zip", sorter:"string"},
-        ],
+        columns:columns
     });
 
     getUserInfo(table);

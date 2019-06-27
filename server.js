@@ -440,7 +440,7 @@ app.post("/get/log", (req, res)=>{
 
 app.post("/get/users", (req, res)=>{
     if(req.isAuthenticated('admin')){
-        rudi_db.any("SELECT users.email_confirmed, users.first_name, users.last_name, users.email, users.phone, users.team, teams.street, teams.doorbell, teams.city, teams.zip FROM users, teams WHERE users.team = teams.id ORDER BY users.team ASC")
+        rudi_db.any("SELECT users.email_confirmed, users.first_name, users.last_name, users.email, users.phone, users.team, teams.street, teams.doorbell, teams.city, teams.zip, teams.preferred_course, teams.disliked_course FROM users, teams WHERE users.team = teams.id ORDER BY users.team ASC")
         .then(rows =>{
             let confirmed_teams = 0;
             for(let i = 0; i < rows.length - 1; i+=2){

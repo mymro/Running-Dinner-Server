@@ -19,8 +19,8 @@ block content
             div(class="row valign-wrapper")
                 div(class="col s2")
                     button(class="btn waves-effect waves-light" type="submit" name="action") #{forms.save}
-                label(class="col s10 valign-wrapper" id="saved" style="display:none")= text.admin.saved
-                label(class="col s10 valign-wrapper" id="not_saved" style="display:none")= text.admin.not_saved
+                label(class="col s10 valign-wrapper" id="saved" style="display:none")= saved
+                label(class="col s10 valign-wrapper" id="not_saved" style="display:none")= not_saved
                 label(class="col s10 valign-wrapper" id="helper" style="display:block")
 
     div(class="row")
@@ -43,5 +43,20 @@ block content
 block scripts
   script(src='/js/just-validate.js' type='application/javascript')
   script(src='/js/tabulator.js' type='application/javascript')
+  script(type='application/javascript')
+    |let columns = [
+    |        {title:"#{email_confirmed}", field:"email_confirmed", sorter:"boolean", formatter:"tickCross"},
+    |        {title:"#{forms.first_name}", field:"first_name", sorter:"string"},
+    |        {title:"#{forms.last_name}", field:"last_name", sorter:"string"},
+    |        {title:"#{forms.email}", field:"email", sorter:"string"},
+    |        {title:"#{forms.phone}", field:"phone", sorter:"string"},
+    |        {title:"#{forms.street}", field:"street", sorter:"string"},
+    |        {title:"#{forms.doorbell}", field:"doorbell", sorter:"string"},
+    |        {title:"#{forms.city}", field:"city", sorter:"string"},
+    |        {title:"#{forms.zip}", field:"zip", sorter:"string"},
+    |        {title:"#{preferred_course}", field:"preferred_course", sorter:"string"},
+    |        {title:"#{disliked_course}", field:"disliked_course", sorter:"string"},
+    |        {title:"#{team}", field:"team", sorter:"number", align:"left"}
+    |    ];
   script(src='/js/admin.js' type='module')
 
