@@ -50,17 +50,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     var table = new Tabulator("#users", {
+        height:"500",
+        layout:"fitColumns",
         columns:[
-            {title:"Email Confirmed", field:"email_confirmed", sorter:"boolean", formatter:"tickCross", width:"150"},
-            {title:"First Name", field:"first_name", sorter:"string", width:"120"},
-            {title:"Last Name", field:"last_name", sorter:"string", width:"120"},
-            {title:"Email", field:"email", sorter:"string", width:"310"},
-            {title:"Phone", field:"phone", sorter:"string", width:"110"},
-            {title:"Team", field:"team", sorter:"number", align:"left", width:"80"},
-            {title:"Street", field:"street", sorter:"string", width:"210"},
-            {title:"Doorbell", field:"doorbell", sorter:"string", width:"110"},
-            {title:"City", field:"city", sorter:"string", width:"210" },
-            {title:"zip", field:"zip", sorter:"string", width:"80"},
+            {title:"Email Confirmed", field:"email_confirmed", sorter:"boolean", formatter:"tickCross"},
+            {title:"First Name", field:"first_name", sorter:"string"},
+            {title:"Last Name", field:"last_name", sorter:"string"},
+            {title:"Email", field:"email", sorter:"string"},
+            {title:"Phone", field:"phone", sorter:"string"},
+            {title:"Team", field:"team", sorter:"number", align:"left"},
+            {title:"Street", field:"street", sorter:"string"},
+            {title:"Doorbell", field:"doorbell", sorter:"string"},
+            {title:"City", field:"city", sorter:"string"},
+            {title:"zip", field:"zip", sorter:"string"},
         ],
     });
 
@@ -71,6 +73,7 @@ window.startRouting = ()=>{
     fetch("/start/routing", {method:"POST"})
     .then(response =>{
         if (response.status === 200) {
+            document.getElementById("start_routing").classList.add("disabled");
             let div = document.getElementById("log");
             div.innerHTML = "";
             div.style.borderWidth = "0px";
@@ -130,10 +133,14 @@ function updateSolverState(){
                     div.style.borderWidth = "2px";
                     div.style.borderColor = "green";
                     document.getElementById("ok").style.display = "block";
+                    document.getElementById("start_routing").classList.remove("disabled");
                 }else if(solver_state == solver_states.error){
                     div.style.borderWidth = "2px";
                     div.style.borderColor = "red";
                     document.getElementById("error").style.display = "block";
+                    document.getElementById("start_routing").classList.remove("disabled");
+                }else if(solver_state == solver_states.running){
+                    document.getElementById("start_routing").classList.add("disabled");
                 }
             })
         }else if(response.status == 401){

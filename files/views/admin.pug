@@ -31,7 +31,7 @@ block content
     p(calss="row")= text.admin.disclaimer
     div(class="row")
             div(class="col")
-                button(class="btn waves-effect waves-light" onclick="startRouting()") #{text.admin.start_routing}
+                button(class="btn waves-effect waves-light" id="start_routing" onclick="startRouting()") #{text.admin.start_routing}
     div(class="row")
         p= text.admin.log
         p(class="state-ok" id="ok") OK

@@ -393,7 +393,7 @@ app.post("/change/settings", (req, res)=>{
 
 app.post("/start/routing", (req, res)=>{
     if(req.isAuthenticated('admin')){
-        if(solver_state == solver_states.running){
+        if(solver_state != solver_states.running){
             let stream = fs.createWriteStream("./log.txt", {})
             stream.on('open', ()=>{
                 solver_state = solver_states.running;
@@ -480,6 +480,9 @@ app.use(function(req, res) {
     serveFile(req.path, res);
 });
 
+//------------------------------------------------------------
+//start the server
+//------------------------------------------------------------
 settings_helper.initSettings()//first get all the settings, then start the server.
 .then(()=>{
     new Promise((resolve, reject)=>{//clear log.txt
@@ -507,7 +510,6 @@ settings_helper.initSettings()//first get all the settings, then start the serve
     for (const file of files) {
         let ext = file.split('.');
         ext = ext[ext.length-1];
-        console.log(file);
         if(ext == "sol" || ext == "mps"){
             promises.push( new Promise((resolve, reject)=>{
                 fs.unlink(path.join("./", file), err => {

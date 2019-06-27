@@ -3,6 +3,7 @@ module.exports = {
         lang:"de",
         forms:{
             email:"Email",
+            email_confirmed:"Email bestätigt",
             password:"Passwort",
             login:"Einloggen",
             first_name:"Vorname",
