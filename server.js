@@ -493,7 +493,7 @@ settings_helper.initSettings()//first get all the settings, then start the serve
     })
 }).then(()=>{//get all files in directoy
     return new Promise((resolve, reject)=>{
-        fs.readdir(config.baseDir, (err, files) => {
+        fs.readdir("./", (err, files) => {
             if(err){
                 reject(err);
             }else{
@@ -505,10 +505,12 @@ settings_helper.initSettings()//first get all the settings, then start the serve
 }).then(files =>{//delete mps and sol files that might be left over from a previous solver run
     let promises = [];
     for (const file of files) {
-        let ext = path.extname;
+        let ext = file.split('.');
+        ext = ext[ext.length-1];
+        console.log(file);
         if(ext == "sol" || ext == "mps"){
             promises.push( new Promise((resolve, reject)=>{
-                fs.unlink(path.join(config.baseDir, file), err => {
+                fs.unlink(path.join("./", file), err => {
                     if(err){
                         reject(err);
                     }else{
