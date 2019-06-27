@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A server for hosting a running dinner event",
   "main": "server.js",
+  "homepage": "https://github.com/mymro/Running-Dinner-Server",
   "scripts": {
     "debug": "nodemon --inspect server.js"
   },
@@ -26,11 +27,11 @@
     "validator": "^11.0.0"
   },
   "nodemonConfig": {
-	"ext":"pug js json",
+    "ext": "pug js json",
     "ignore": [
-		"files/js/*",
-		"files/css/*",
-		"files/views/*"
+      "files/js/*",
+      "files/css/*",
+      "files/views/*"
     ]
   }
 }

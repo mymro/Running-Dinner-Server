@@ -4,4 +4,22 @@
     float: left;
     overflow: auto;
     min-height: 4em;
+    border-style: solid;
+    border-width: 0px;
+}
+
+.state{
+    @extend .row;
+    display: none;
+    font-weight: bold;  
+}
+
+.state-ok{
+    @extend .state;
+    color: green;
+}
+
+.state-error{
+    @extend .state;
+    color: red;
 }

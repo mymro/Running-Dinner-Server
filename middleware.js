@@ -1,5 +1,5 @@
 let jwt = require('jsonwebtoken');
-const config = require('./config.js');
+const config = require('./config.json');
 const translations = require('./lang');
 const locale = require("locale");
 const supported_lang = ["de"];
@@ -10,6 +10,7 @@ let setUpMiddleware = (app, settings_helper) => {
   app.use(addLocals);
   app.use(checkToken);
   app.use(settings_helper.getMiddleware());
+  app.use(addIsAuthenticated);
 }
 
 
@@ -45,6 +46,17 @@ let checkToken = (req, res, next) => {
 
 let addLocals = (req, res, next)=>{
   res.locals = translations[req.locale];
+  next();
+}
+
+let addIsAuthenticated = (req, res, next)=>{
+  req.isAuthenticated = (role)=>{
+    if(role){
+      return res.locals.authenticated && res.locals.token.role == role;
+    }else{
+      return res.locals.authenticated;
+    }
+  }
   next();
 }
 

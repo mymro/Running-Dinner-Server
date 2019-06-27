@@ -48,7 +48,7 @@ module.exports = {
         },
         text:{
             something_went_wrong:"Es gab einen Fehler. Bitte probiere es später nocheinmal.",
-            session_timed_out:"Deine Sitzung ist abgelaufen. Bitte logge dich nocheinmal ein.",
+            session_timed_out_redirect:"Deine Sitzung ist abgelaufen. Du wirst in wenigen Sekunden zum Login weitergeleitet.",
             registration_complete:{
                 thanks:"Danke, dass ihr euch für das running dinner Event angemeldet habt. Ihr werdet in den nächsten Minuten eine Email bekommen mit einem Bestätigungslink und einem Passwort zum einloggen.",
                 disclaimer:"Eure Teilnahme ist erst bestätigt, wenn mindestens einer von euch seine Email mit dem zugesandten Link bestätigt.",
@@ -77,7 +77,8 @@ module.exports = {
                 routing:"Routen erstellen",
                 log:"Routingprogramm Logoutput:",
                 start_routing:"Den Routingprozess starten",
-                disclaimer:"Bevor du den Routingprozess startest solltest du dich vergewissern, dass sich keine neuen teams mehr anmelden und ihre Daten ändern können (siehe oben unter Einstellungen)."
+                disclaimer:"Bevor du den Routingprozess startest solltest du dich vergewissern, dass sich keine neuen teams mehr anmelden und ihre Daten ändern können (siehe oben unter Einstellungen).",
+                team_count:"Soviele Teams sind fertig registriert (mindestens eine Email bestätigt): "
             }
         }
     }

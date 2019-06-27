@@ -1,0 +1,21 @@
+{
+    "secret": "thisismyjwttokenhive",
+    "db": "rudi",
+    "db_user": "rudi_server",
+    "db_pass": "1234",
+    "db_port": 5432,
+    "db_host": "localhost",
+    "validExtensions" : {
+        ".html" : "text/html",
+        ".js": "application/javascript",
+        ".css": "text/css",
+        ".txt": "text/plain"
+    },
+    "baseDir": "/files",
+    "zipValidatorLocation": "AT",
+    "countryString": "Austria",
+    "passwordLength": 5,
+    "saltRounds": 12,
+    "baseUrl":"http://localhost:3000",
+    "pythonLogPath":"./log.txt"
+  }

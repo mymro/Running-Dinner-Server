@@ -30,7 +30,12 @@ class SettingsHelper{
         for(let key in settings){
           await t.none("UPDATE settings set data = $1 WHERE name = $2", [settings[key].toString(), key.toString()])
         }
-      }).catch(err =>{
+      }).then(()=>{
+        for(let key in settings){
+          this.settings[key] = settings[key]
+        }
+      })
+      .catch(err =>{
         throw(new ServerError(500, err.message));
       })
     }

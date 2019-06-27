@@ -9,7 +9,8 @@
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly",
     "M": true,
-    "layout":true
+    "layout":true,
+	"Tabulator":true
     },
     "parserOptions": {
 		"sourceType": "module",

@@ -16,14 +16,15 @@ COUNTRY = "Österreich"
 
 class Adress():
 
-    def __init__(self, street, doorbell, postal_code, city):
+    def __init__(self, street, doorbell, postal_code, city, country):
         self.city = city
         self.street = street
         self.postal_code = postal_code
         self.doorbell = doorbell
+        self.country = country
     
     def __str__(self):
-        return '%s %s, %s %s, %s' %(self.street, str(self.doorbell), str(self.postal_code), self.city, COUNTRY)
+        return '%s %s, %s %s, %s' %(self.street, str(self.doorbell), str(self.postal_code), self.city, self.country)
 
 #notes
 class Team():

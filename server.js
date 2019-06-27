@@ -7,7 +7,7 @@ const monitor = require('pg-monitor');
 const jwt = require('jsonwebtoken');
 const middleware = require('./middleware');
 const cookieParser = require('cookie-parser')
-const config = require('./config');
+const config = require('./config.json');
 const bcrypt = require('bcrypt');
 const initOptions = {/* initialization options */};
 monitor.attach(initOptions);
@@ -21,11 +21,12 @@ const settings = require('./settings');
 const ServerError = require('./server_error');
 
 const rudi_db = pgp({
-    host: 'localhost',
-    port: 5432,
-    database: 'rudi',
-    user: 'rudi_server',
-    password: '1234',
+    host: config.db_host,
+    port: config.db_port,
+    database: config.db,
+    user: config.db_user,
+    password: config.db_pass,
+    client_encoding: "UTF-8"
     //ssl: true
 });
 
@@ -54,6 +55,14 @@ const roles = {
     admin: 'admin',
 };
 
+const solver_states = {
+    undefined: 0,
+    running: 1,
+    finished: 2,
+    error: 3
+}
+
+let solver_state = solver_states.undefined;
 let settings_helper = new settings.SettingsHelper(rudi_db);
 
 var app = express();
@@ -82,6 +91,10 @@ app.get("/register", (req, res)=>{
     }else{
         res.sendStatus(403);
     }
+})
+
+app.get("/timed/out", (req, res)=>{
+    res.render("timed_out");
 })
 
 app.get("/confirm/email", (req, res)=>{
@@ -128,11 +141,11 @@ app.get("/new/confirmation/sent", (req, res)=>{
 })
 
 app.get("/admin", (req, res)=>{
-    if(res.locals.authenticated && res.locals.token.role == roles.admin){
+    if(req.isAuthenticated('admin')){
         res.render("admin");
     }else{
         res.status(401);
-        res.redirect('/');
+        res.redirect('/timed/out');
     }
     
 })
@@ -334,15 +347,6 @@ app.post("/team/register", (req,res)=>{
     })
 })
 
-app.post("/get_log", (req, res)=>{
-    readFile("./log.txt")
-    .then(file => sendData(file, res))
-    .catch(err =>{
-        console.error(err);
-        res.sendStatus(err.status_code);
-    })
-})
-
 app.post("/user/email/unconfirmed", (req, res)=>{
     let email = req.body.email;
     if(validator.isEmail(email)){
@@ -374,7 +378,7 @@ app.post("/user/exists", (req, res)=>{
 })
 
 app.post("/change/settings", (req, res)=>{
-    if(res.locals.authenticated){
+    if(req.isAuthenticated('admin')){
         settings_helper.changeSettings(req.body.settings)
         .then(()=>{
             res.sendStatus(200);
@@ -388,20 +392,70 @@ app.post("/change/settings", (req, res)=>{
 })
 
 app.post("/start/routing", (req, res)=>{
-    if(res.locals.authenticated){
-        let stream = fs.createWriteStream("./log.txt")
-        stream.on('open', ()=>{
-            let python = spawn.spawn("python", ["test.py"], {
-            stdio: [ 'pipe', stream, stream]});
-            python.unref();
-            python.on('close', (code) => {
-                console.log(`child process exited with code ${code}`);
-            });
-        })
-        res.sendStatus(200);
+    if(req.isAuthenticated('admin')){
+        if(solver_state == solver_states.running){
+            let stream = fs.createWriteStream("./log.txt", {})
+            stream.on('open', ()=>{
+                solver_state = solver_states.running;
+                let python = spawn.spawn("python", ["start_routing.py"], {
+                stdio: [ 'pipe', stream, stream]});
+                python.unref();
+                python.on('close', (code) => {
+                    if(code == 0){
+                        solver_state = solver_states.finished;
+                    }else{
+                        solver_state = solver_states.error;
+                    }
+                });
+            })
+            res.sendStatus(200);
+        }else{
+            res.sendStatus(503);
+        }
     }else{
         res.sendStatus(401);
     }
+})
+
+app.post("/get/solver/state", (req, res)=>{
+    if(req.isAuthenticated('admin')){
+        res.send(solver_state.toString());
+    }else{
+        res.sendStatus(401);
+    }
+})
+
+app.post("/get/log", (req, res)=>{
+    if(req.isAuthenticated('admin')){
+        readFile(config.pythonLogPath)
+        .then(file => sendData(file, res))
+        .catch(err =>{
+            console.error(err);
+            res.sendStatus(err.status_code);
+        })
+    }else{
+        res.sendStatus(401);
+    }
+})
+
+app.post("/get/users", (req, res)=>{
+    if(req.isAuthenticated('admin')){
+        rudi_db.any("SELECT users.email_confirmed, users.first_name, users.last_name, users.email, users.phone, users.team, teams.street, teams.doorbell, teams.city, teams.zip FROM users, teams WHERE users.team = teams.id ORDER BY users.team ASC")
+        .then(rows =>{
+            let confirmed_teams = 0;
+            for(let i = 0; i < rows.length - 1; i+=2){
+                if(rows[i].email_confirmed || rows[i+1].email_confirmed){
+                    confirmed_teams++;
+                }
+            }
+            res.json({
+                users:rows,
+                confirmed_teams:confirmed_teams
+            });
+        })
+    }else{
+        res.sendStatus(401);
+    }   
 })
 
 app.post("/valid/phone", (req, res)=>{
@@ -428,6 +482,44 @@ app.use(function(req, res) {
 
 settings_helper.initSettings()//first get all the settings, then start the server.
 .then(()=>{
+    new Promise((resolve, reject)=>{//clear log.txt
+        fs.writeFile(config.pythonLogPath, "", (err)=>{
+            if(err){
+                reject(err);
+            }else{
+                resolve();
+            }
+        })
+    })
+}).then(()=>{//get all files in directoy
+    return new Promise((resolve, reject)=>{
+        fs.readdir(config.baseDir, (err, files) => {
+            if(err){
+                reject(err);
+            }else{
+                resolve(files);
+            }
+        })
+            
+    })
+}).then(files =>{//delete mps and sol files that might be left over from a previous solver run
+    let promises = [];
+    for (const file of files) {
+        let ext = path.extname;
+        if(ext == "sol" || ext == "mps"){
+            promises.push( new Promise((resolve, reject)=>{
+                fs.unlink(path.join(config.baseDir, file), err => {
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve();
+                    }
+                });
+            }))
+        }
+    }
+    return Promise.all(promises);
+}).then(()=>{
     var server = app.listen(3000, function () {
         var port = server.address().port
         console.log("webserver: %s:%s",ip.address(), port)
@@ -489,7 +581,7 @@ function sendMail(to, subject, renderer, locals){
 
 function getRegistrationData(req){
     let team = {}
-    team.street = ''+req.body.treet;
+    team.street = ''+req.body.street;
     team.doorbell = ''+req.body.doorbell;
     team.zip = ''+req.body.zip;
     team.city = ''+req.body.city;

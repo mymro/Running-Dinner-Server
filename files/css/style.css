@@ -3308,7 +3308,7 @@ table span.badge {
     width: 70%;
   }
 }
-.col .row {
+.col .row, .col .state, .col .state-error, .col .state-ok {
   margin-left: -0.75rem;
   margin-right: -0.75rem;
 }
@@ -3327,748 +3327,748 @@ table span.badge {
   padding-top: 0;
 }
 
-.row {
+.row, .state, .state-error, .state-ok {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
 }
-.row:after {
+.row:after, .state:after, .state-error:after, .state-ok:after {
   content: "";
   display: table;
   clear: both;
 }
-.row .col {
+.row .col, .state .col, .state-error .col, .state-ok .col {
   float: left;
   box-sizing: border-box;
   padding: 0 0.75rem;
   min-height: 1px;
 }
-.row .col[class*=push-], .row .col[class*=pull-] {
+.row .col[class*=push-], .state .col[class*=push-], .state-error .col[class*=push-], .state-ok .col[class*=push-], .row .col[class*=pull-], .state .col[class*=pull-], .state-error .col[class*=pull-], .state-ok .col[class*=pull-] {
   position: relative;
 }
-.row .col.s1 {
+.row .col.s1, .state .col.s1, .state-error .col.s1, .state-ok .col.s1 {
   width: 8.3333333333%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s2 {
+.row .col.s2, .state .col.s2, .state-error .col.s2, .state-ok .col.s2 {
   width: 16.6666666667%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s3 {
+.row .col.s3, .state .col.s3, .state-error .col.s3, .state-ok .col.s3 {
   width: 25%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s4 {
+.row .col.s4, .state .col.s4, .state-error .col.s4, .state-ok .col.s4 {
   width: 33.3333333333%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s5 {
+.row .col.s5, .state .col.s5, .state-error .col.s5, .state-ok .col.s5 {
   width: 41.6666666667%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s6 {
+.row .col.s6, .state .col.s6, .state-error .col.s6, .state-ok .col.s6 {
   width: 50%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s7 {
+.row .col.s7, .state .col.s7, .state-error .col.s7, .state-ok .col.s7 {
   width: 58.3333333333%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s8 {
+.row .col.s8, .state .col.s8, .state-error .col.s8, .state-ok .col.s8 {
   width: 66.6666666667%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s9 {
+.row .col.s9, .state .col.s9, .state-error .col.s9, .state-ok .col.s9 {
   width: 75%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s10 {
+.row .col.s10, .state .col.s10, .state-error .col.s10, .state-ok .col.s10 {
   width: 83.3333333333%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s11 {
+.row .col.s11, .state .col.s11, .state-error .col.s11, .state-ok .col.s11 {
   width: 91.6666666667%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.s12 {
+.row .col.s12, .state .col.s12, .state-error .col.s12, .state-ok .col.s12 {
   width: 100%;
   margin-left: auto;
   left: auto;
   right: auto;
 }
-.row .col.offset-s1 {
+.row .col.offset-s1, .state .col.offset-s1, .state-error .col.offset-s1, .state-ok .col.offset-s1 {
   margin-left: 8.3333333333%;
 }
-.row .col.pull-s1 {
+.row .col.pull-s1, .state .col.pull-s1, .state-error .col.pull-s1, .state-ok .col.pull-s1 {
   right: 8.3333333333%;
 }
-.row .col.push-s1 {
+.row .col.push-s1, .state .col.push-s1, .state-error .col.push-s1, .state-ok .col.push-s1 {
   left: 8.3333333333%;
 }
-.row .col.offset-s2 {
+.row .col.offset-s2, .state .col.offset-s2, .state-error .col.offset-s2, .state-ok .col.offset-s2 {
   margin-left: 16.6666666667%;
 }
-.row .col.pull-s2 {
+.row .col.pull-s2, .state .col.pull-s2, .state-error .col.pull-s2, .state-ok .col.pull-s2 {
   right: 16.6666666667%;
 }
-.row .col.push-s2 {
+.row .col.push-s2, .state .col.push-s2, .state-error .col.push-s2, .state-ok .col.push-s2 {
   left: 16.6666666667%;
 }
-.row .col.offset-s3 {
+.row .col.offset-s3, .state .col.offset-s3, .state-error .col.offset-s3, .state-ok .col.offset-s3 {
   margin-left: 25%;
 }
-.row .col.pull-s3 {
+.row .col.pull-s3, .state .col.pull-s3, .state-error .col.pull-s3, .state-ok .col.pull-s3 {
   right: 25%;
 }
-.row .col.push-s3 {
+.row .col.push-s3, .state .col.push-s3, .state-error .col.push-s3, .state-ok .col.push-s3 {
   left: 25%;
 }
-.row .col.offset-s4 {
+.row .col.offset-s4, .state .col.offset-s4, .state-error .col.offset-s4, .state-ok .col.offset-s4 {
   margin-left: 33.3333333333%;
 }
-.row .col.pull-s4 {
+.row .col.pull-s4, .state .col.pull-s4, .state-error .col.pull-s4, .state-ok .col.pull-s4 {
   right: 33.3333333333%;
 }
-.row .col.push-s4 {
+.row .col.push-s4, .state .col.push-s4, .state-error .col.push-s4, .state-ok .col.push-s4 {
   left: 33.3333333333%;
 }
-.row .col.offset-s5 {
+.row .col.offset-s5, .state .col.offset-s5, .state-error .col.offset-s5, .state-ok .col.offset-s5 {
   margin-left: 41.6666666667%;
 }
-.row .col.pull-s5 {
+.row .col.pull-s5, .state .col.pull-s5, .state-error .col.pull-s5, .state-ok .col.pull-s5 {
   right: 41.6666666667%;
 }
-.row .col.push-s5 {
+.row .col.push-s5, .state .col.push-s5, .state-error .col.push-s5, .state-ok .col.push-s5 {
   left: 41.6666666667%;
 }
-.row .col.offset-s6 {
+.row .col.offset-s6, .state .col.offset-s6, .state-error .col.offset-s6, .state-ok .col.offset-s6 {
   margin-left: 50%;
 }
-.row .col.pull-s6 {
+.row .col.pull-s6, .state .col.pull-s6, .state-error .col.pull-s6, .state-ok .col.pull-s6 {
   right: 50%;
 }
-.row .col.push-s6 {
+.row .col.push-s6, .state .col.push-s6, .state-error .col.push-s6, .state-ok .col.push-s6 {
   left: 50%;
 }
-.row .col.offset-s7 {
+.row .col.offset-s7, .state .col.offset-s7, .state-error .col.offset-s7, .state-ok .col.offset-s7 {
   margin-left: 58.3333333333%;
 }
-.row .col.pull-s7 {
+.row .col.pull-s7, .state .col.pull-s7, .state-error .col.pull-s7, .state-ok .col.pull-s7 {
   right: 58.3333333333%;
 }
-.row .col.push-s7 {
+.row .col.push-s7, .state .col.push-s7, .state-error .col.push-s7, .state-ok .col.push-s7 {
   left: 58.3333333333%;
 }
-.row .col.offset-s8 {
+.row .col.offset-s8, .state .col.offset-s8, .state-error .col.offset-s8, .state-ok .col.offset-s8 {
   margin-left: 66.6666666667%;
 }
-.row .col.pull-s8 {
+.row .col.pull-s8, .state .col.pull-s8, .state-error .col.pull-s8, .state-ok .col.pull-s8 {
   right: 66.6666666667%;
 }
-.row .col.push-s8 {
+.row .col.push-s8, .state .col.push-s8, .state-error .col.push-s8, .state-ok .col.push-s8 {
   left: 66.6666666667%;
 }
-.row .col.offset-s9 {
+.row .col.offset-s9, .state .col.offset-s9, .state-error .col.offset-s9, .state-ok .col.offset-s9 {
   margin-left: 75%;
 }
-.row .col.pull-s9 {
+.row .col.pull-s9, .state .col.pull-s9, .state-error .col.pull-s9, .state-ok .col.pull-s9 {
   right: 75%;
 }
-.row .col.push-s9 {
+.row .col.push-s9, .state .col.push-s9, .state-error .col.push-s9, .state-ok .col.push-s9 {
   left: 75%;
 }
-.row .col.offset-s10 {
+.row .col.offset-s10, .state .col.offset-s10, .state-error .col.offset-s10, .state-ok .col.offset-s10 {
   margin-left: 83.3333333333%;
 }
-.row .col.pull-s10 {
+.row .col.pull-s10, .state .col.pull-s10, .state-error .col.pull-s10, .state-ok .col.pull-s10 {
   right: 83.3333333333%;
 }
-.row .col.push-s10 {
+.row .col.push-s10, .state .col.push-s10, .state-error .col.push-s10, .state-ok .col.push-s10 {
   left: 83.3333333333%;
 }
-.row .col.offset-s11 {
+.row .col.offset-s11, .state .col.offset-s11, .state-error .col.offset-s11, .state-ok .col.offset-s11 {
   margin-left: 91.6666666667%;
 }
-.row .col.pull-s11 {
+.row .col.pull-s11, .state .col.pull-s11, .state-error .col.pull-s11, .state-ok .col.pull-s11 {
   right: 91.6666666667%;
 }
-.row .col.push-s11 {
+.row .col.push-s11, .state .col.push-s11, .state-error .col.push-s11, .state-ok .col.push-s11 {
   left: 91.6666666667%;
 }
-.row .col.offset-s12 {
+.row .col.offset-s12, .state .col.offset-s12, .state-error .col.offset-s12, .state-ok .col.offset-s12 {
   margin-left: 100%;
 }
-.row .col.pull-s12 {
+.row .col.pull-s12, .state .col.pull-s12, .state-error .col.pull-s12, .state-ok .col.pull-s12 {
   right: 100%;
 }
-.row .col.push-s12 {
+.row .col.push-s12, .state .col.push-s12, .state-error .col.push-s12, .state-ok .col.push-s12 {
   left: 100%;
 }
 @media only screen and (min-width : 601px) {
-  .row .col.m1 {
+  .row .col.m1, .state .col.m1, .state-error .col.m1, .state-ok .col.m1 {
     width: 8.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m2 {
+  .row .col.m2, .state .col.m2, .state-error .col.m2, .state-ok .col.m2 {
     width: 16.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m3 {
+  .row .col.m3, .state .col.m3, .state-error .col.m3, .state-ok .col.m3 {
     width: 25%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m4 {
+  .row .col.m4, .state .col.m4, .state-error .col.m4, .state-ok .col.m4 {
     width: 33.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m5 {
+  .row .col.m5, .state .col.m5, .state-error .col.m5, .state-ok .col.m5 {
     width: 41.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m6 {
+  .row .col.m6, .state .col.m6, .state-error .col.m6, .state-ok .col.m6 {
     width: 50%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m7 {
+  .row .col.m7, .state .col.m7, .state-error .col.m7, .state-ok .col.m7 {
     width: 58.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m8 {
+  .row .col.m8, .state .col.m8, .state-error .col.m8, .state-ok .col.m8 {
     width: 66.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m9 {
+  .row .col.m9, .state .col.m9, .state-error .col.m9, .state-ok .col.m9 {
     width: 75%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m10 {
+  .row .col.m10, .state .col.m10, .state-error .col.m10, .state-ok .col.m10 {
     width: 83.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m11 {
+  .row .col.m11, .state .col.m11, .state-error .col.m11, .state-ok .col.m11 {
     width: 91.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.m12 {
+  .row .col.m12, .state .col.m12, .state-error .col.m12, .state-ok .col.m12 {
     width: 100%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.offset-m1 {
+  .row .col.offset-m1, .state .col.offset-m1, .state-error .col.offset-m1, .state-ok .col.offset-m1 {
     margin-left: 8.3333333333%;
   }
-  .row .col.pull-m1 {
+  .row .col.pull-m1, .state .col.pull-m1, .state-error .col.pull-m1, .state-ok .col.pull-m1 {
     right: 8.3333333333%;
   }
-  .row .col.push-m1 {
+  .row .col.push-m1, .state .col.push-m1, .state-error .col.push-m1, .state-ok .col.push-m1 {
     left: 8.3333333333%;
   }
-  .row .col.offset-m2 {
+  .row .col.offset-m2, .state .col.offset-m2, .state-error .col.offset-m2, .state-ok .col.offset-m2 {
     margin-left: 16.6666666667%;
   }
-  .row .col.pull-m2 {
+  .row .col.pull-m2, .state .col.pull-m2, .state-error .col.pull-m2, .state-ok .col.pull-m2 {
     right: 16.6666666667%;
   }
-  .row .col.push-m2 {
+  .row .col.push-m2, .state .col.push-m2, .state-error .col.push-m2, .state-ok .col.push-m2 {
     left: 16.6666666667%;
   }
-  .row .col.offset-m3 {
+  .row .col.offset-m3, .state .col.offset-m3, .state-error .col.offset-m3, .state-ok .col.offset-m3 {
     margin-left: 25%;
   }
-  .row .col.pull-m3 {
+  .row .col.pull-m3, .state .col.pull-m3, .state-error .col.pull-m3, .state-ok .col.pull-m3 {
     right: 25%;
   }
-  .row .col.push-m3 {
+  .row .col.push-m3, .state .col.push-m3, .state-error .col.push-m3, .state-ok .col.push-m3 {
     left: 25%;
   }
-  .row .col.offset-m4 {
+  .row .col.offset-m4, .state .col.offset-m4, .state-error .col.offset-m4, .state-ok .col.offset-m4 {
     margin-left: 33.3333333333%;
   }
-  .row .col.pull-m4 {
+  .row .col.pull-m4, .state .col.pull-m4, .state-error .col.pull-m4, .state-ok .col.pull-m4 {
     right: 33.3333333333%;
   }
-  .row .col.push-m4 {
+  .row .col.push-m4, .state .col.push-m4, .state-error .col.push-m4, .state-ok .col.push-m4 {
     left: 33.3333333333%;
   }
-  .row .col.offset-m5 {
+  .row .col.offset-m5, .state .col.offset-m5, .state-error .col.offset-m5, .state-ok .col.offset-m5 {
     margin-left: 41.6666666667%;
   }
-  .row .col.pull-m5 {
+  .row .col.pull-m5, .state .col.pull-m5, .state-error .col.pull-m5, .state-ok .col.pull-m5 {
     right: 41.6666666667%;
   }
-  .row .col.push-m5 {
+  .row .col.push-m5, .state .col.push-m5, .state-error .col.push-m5, .state-ok .col.push-m5 {
     left: 41.6666666667%;
   }
-  .row .col.offset-m6 {
+  .row .col.offset-m6, .state .col.offset-m6, .state-error .col.offset-m6, .state-ok .col.offset-m6 {
     margin-left: 50%;
   }
-  .row .col.pull-m6 {
+  .row .col.pull-m6, .state .col.pull-m6, .state-error .col.pull-m6, .state-ok .col.pull-m6 {
     right: 50%;
   }
-  .row .col.push-m6 {
+  .row .col.push-m6, .state .col.push-m6, .state-error .col.push-m6, .state-ok .col.push-m6 {
     left: 50%;
   }
-  .row .col.offset-m7 {
+  .row .col.offset-m7, .state .col.offset-m7, .state-error .col.offset-m7, .state-ok .col.offset-m7 {
     margin-left: 58.3333333333%;
   }
-  .row .col.pull-m7 {
+  .row .col.pull-m7, .state .col.pull-m7, .state-error .col.pull-m7, .state-ok .col.pull-m7 {
     right: 58.3333333333%;
   }
-  .row .col.push-m7 {
+  .row .col.push-m7, .state .col.push-m7, .state-error .col.push-m7, .state-ok .col.push-m7 {
     left: 58.3333333333%;
   }
-  .row .col.offset-m8 {
+  .row .col.offset-m8, .state .col.offset-m8, .state-error .col.offset-m8, .state-ok .col.offset-m8 {
     margin-left: 66.6666666667%;
   }
-  .row .col.pull-m8 {
+  .row .col.pull-m8, .state .col.pull-m8, .state-error .col.pull-m8, .state-ok .col.pull-m8 {
     right: 66.6666666667%;
   }
-  .row .col.push-m8 {
+  .row .col.push-m8, .state .col.push-m8, .state-error .col.push-m8, .state-ok .col.push-m8 {
     left: 66.6666666667%;
   }
-  .row .col.offset-m9 {
+  .row .col.offset-m9, .state .col.offset-m9, .state-error .col.offset-m9, .state-ok .col.offset-m9 {
     margin-left: 75%;
   }
-  .row .col.pull-m9 {
+  .row .col.pull-m9, .state .col.pull-m9, .state-error .col.pull-m9, .state-ok .col.pull-m9 {
     right: 75%;
   }
-  .row .col.push-m9 {
+  .row .col.push-m9, .state .col.push-m9, .state-error .col.push-m9, .state-ok .col.push-m9 {
     left: 75%;
   }
-  .row .col.offset-m10 {
+  .row .col.offset-m10, .state .col.offset-m10, .state-error .col.offset-m10, .state-ok .col.offset-m10 {
     margin-left: 83.3333333333%;
   }
-  .row .col.pull-m10 {
+  .row .col.pull-m10, .state .col.pull-m10, .state-error .col.pull-m10, .state-ok .col.pull-m10 {
     right: 83.3333333333%;
   }
-  .row .col.push-m10 {
+  .row .col.push-m10, .state .col.push-m10, .state-error .col.push-m10, .state-ok .col.push-m10 {
     left: 83.3333333333%;
   }
-  .row .col.offset-m11 {
+  .row .col.offset-m11, .state .col.offset-m11, .state-error .col.offset-m11, .state-ok .col.offset-m11 {
     margin-left: 91.6666666667%;
   }
-  .row .col.pull-m11 {
+  .row .col.pull-m11, .state .col.pull-m11, .state-error .col.pull-m11, .state-ok .col.pull-m11 {
     right: 91.6666666667%;
   }
-  .row .col.push-m11 {
+  .row .col.push-m11, .state .col.push-m11, .state-error .col.push-m11, .state-ok .col.push-m11 {
     left: 91.6666666667%;
   }
-  .row .col.offset-m12 {
+  .row .col.offset-m12, .state .col.offset-m12, .state-error .col.offset-m12, .state-ok .col.offset-m12 {
     margin-left: 100%;
   }
-  .row .col.pull-m12 {
+  .row .col.pull-m12, .state .col.pull-m12, .state-error .col.pull-m12, .state-ok .col.pull-m12 {
     right: 100%;
   }
-  .row .col.push-m12 {
+  .row .col.push-m12, .state .col.push-m12, .state-error .col.push-m12, .state-ok .col.push-m12 {
     left: 100%;
   }
 }
 @media only screen and (min-width : 993px) {
-  .row .col.l1 {
+  .row .col.l1, .state .col.l1, .state-error .col.l1, .state-ok .col.l1 {
     width: 8.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l2 {
+  .row .col.l2, .state .col.l2, .state-error .col.l2, .state-ok .col.l2 {
     width: 16.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l3 {
+  .row .col.l3, .state .col.l3, .state-error .col.l3, .state-ok .col.l3 {
     width: 25%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l4 {
+  .row .col.l4, .state .col.l4, .state-error .col.l4, .state-ok .col.l4 {
     width: 33.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l5 {
+  .row .col.l5, .state .col.l5, .state-error .col.l5, .state-ok .col.l5 {
     width: 41.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l6 {
+  .row .col.l6, .state .col.l6, .state-error .col.l6, .state-ok .col.l6 {
     width: 50%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l7 {
+  .row .col.l7, .state .col.l7, .state-error .col.l7, .state-ok .col.l7 {
     width: 58.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l8 {
+  .row .col.l8, .state .col.l8, .state-error .col.l8, .state-ok .col.l8 {
     width: 66.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l9 {
+  .row .col.l9, .state .col.l9, .state-error .col.l9, .state-ok .col.l9 {
     width: 75%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l10 {
+  .row .col.l10, .state .col.l10, .state-error .col.l10, .state-ok .col.l10 {
     width: 83.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l11 {
+  .row .col.l11, .state .col.l11, .state-error .col.l11, .state-ok .col.l11 {
     width: 91.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.l12 {
+  .row .col.l12, .state .col.l12, .state-error .col.l12, .state-ok .col.l12 {
     width: 100%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.offset-l1 {
+  .row .col.offset-l1, .state .col.offset-l1, .state-error .col.offset-l1, .state-ok .col.offset-l1 {
     margin-left: 8.3333333333%;
   }
-  .row .col.pull-l1 {
+  .row .col.pull-l1, .state .col.pull-l1, .state-error .col.pull-l1, .state-ok .col.pull-l1 {
     right: 8.3333333333%;
   }
-  .row .col.push-l1 {
+  .row .col.push-l1, .state .col.push-l1, .state-error .col.push-l1, .state-ok .col.push-l1 {
     left: 8.3333333333%;
   }
-  .row .col.offset-l2 {
+  .row .col.offset-l2, .state .col.offset-l2, .state-error .col.offset-l2, .state-ok .col.offset-l2 {
     margin-left: 16.6666666667%;
   }
-  .row .col.pull-l2 {
+  .row .col.pull-l2, .state .col.pull-l2, .state-error .col.pull-l2, .state-ok .col.pull-l2 {
     right: 16.6666666667%;
   }
-  .row .col.push-l2 {
+  .row .col.push-l2, .state .col.push-l2, .state-error .col.push-l2, .state-ok .col.push-l2 {
     left: 16.6666666667%;
   }
-  .row .col.offset-l3 {
+  .row .col.offset-l3, .state .col.offset-l3, .state-error .col.offset-l3, .state-ok .col.offset-l3 {
     margin-left: 25%;
   }
-  .row .col.pull-l3 {
+  .row .col.pull-l3, .state .col.pull-l3, .state-error .col.pull-l3, .state-ok .col.pull-l3 {
     right: 25%;
   }
-  .row .col.push-l3 {
+  .row .col.push-l3, .state .col.push-l3, .state-error .col.push-l3, .state-ok .col.push-l3 {
     left: 25%;
   }
-  .row .col.offset-l4 {
+  .row .col.offset-l4, .state .col.offset-l4, .state-error .col.offset-l4, .state-ok .col.offset-l4 {
     margin-left: 33.3333333333%;
   }
-  .row .col.pull-l4 {
+  .row .col.pull-l4, .state .col.pull-l4, .state-error .col.pull-l4, .state-ok .col.pull-l4 {
     right: 33.3333333333%;
   }
-  .row .col.push-l4 {
+  .row .col.push-l4, .state .col.push-l4, .state-error .col.push-l4, .state-ok .col.push-l4 {
     left: 33.3333333333%;
   }
-  .row .col.offset-l5 {
+  .row .col.offset-l5, .state .col.offset-l5, .state-error .col.offset-l5, .state-ok .col.offset-l5 {
     margin-left: 41.6666666667%;
   }
-  .row .col.pull-l5 {
+  .row .col.pull-l5, .state .col.pull-l5, .state-error .col.pull-l5, .state-ok .col.pull-l5 {
     right: 41.6666666667%;
   }
-  .row .col.push-l5 {
+  .row .col.push-l5, .state .col.push-l5, .state-error .col.push-l5, .state-ok .col.push-l5 {
     left: 41.6666666667%;
   }
-  .row .col.offset-l6 {
+  .row .col.offset-l6, .state .col.offset-l6, .state-error .col.offset-l6, .state-ok .col.offset-l6 {
     margin-left: 50%;
   }
-  .row .col.pull-l6 {
+  .row .col.pull-l6, .state .col.pull-l6, .state-error .col.pull-l6, .state-ok .col.pull-l6 {
     right: 50%;
   }
-  .row .col.push-l6 {
+  .row .col.push-l6, .state .col.push-l6, .state-error .col.push-l6, .state-ok .col.push-l6 {
     left: 50%;
   }
-  .row .col.offset-l7 {
+  .row .col.offset-l7, .state .col.offset-l7, .state-error .col.offset-l7, .state-ok .col.offset-l7 {
     margin-left: 58.3333333333%;
   }
-  .row .col.pull-l7 {
+  .row .col.pull-l7, .state .col.pull-l7, .state-error .col.pull-l7, .state-ok .col.pull-l7 {
     right: 58.3333333333%;
   }
-  .row .col.push-l7 {
+  .row .col.push-l7, .state .col.push-l7, .state-error .col.push-l7, .state-ok .col.push-l7 {
     left: 58.3333333333%;
   }
-  .row .col.offset-l8 {
+  .row .col.offset-l8, .state .col.offset-l8, .state-error .col.offset-l8, .state-ok .col.offset-l8 {
     margin-left: 66.6666666667%;
   }
-  .row .col.pull-l8 {
+  .row .col.pull-l8, .state .col.pull-l8, .state-error .col.pull-l8, .state-ok .col.pull-l8 {
     right: 66.6666666667%;
   }
-  .row .col.push-l8 {
+  .row .col.push-l8, .state .col.push-l8, .state-error .col.push-l8, .state-ok .col.push-l8 {
     left: 66.6666666667%;
   }
-  .row .col.offset-l9 {
+  .row .col.offset-l9, .state .col.offset-l9, .state-error .col.offset-l9, .state-ok .col.offset-l9 {
     margin-left: 75%;
   }
-  .row .col.pull-l9 {
+  .row .col.pull-l9, .state .col.pull-l9, .state-error .col.pull-l9, .state-ok .col.pull-l9 {
     right: 75%;
   }
-  .row .col.push-l9 {
+  .row .col.push-l9, .state .col.push-l9, .state-error .col.push-l9, .state-ok .col.push-l9 {
     left: 75%;
   }
-  .row .col.offset-l10 {
+  .row .col.offset-l10, .state .col.offset-l10, .state-error .col.offset-l10, .state-ok .col.offset-l10 {
     margin-left: 83.3333333333%;
   }
-  .row .col.pull-l10 {
+  .row .col.pull-l10, .state .col.pull-l10, .state-error .col.pull-l10, .state-ok .col.pull-l10 {
     right: 83.3333333333%;
   }
-  .row .col.push-l10 {
+  .row .col.push-l10, .state .col.push-l10, .state-error .col.push-l10, .state-ok .col.push-l10 {
     left: 83.3333333333%;
   }
-  .row .col.offset-l11 {
+  .row .col.offset-l11, .state .col.offset-l11, .state-error .col.offset-l11, .state-ok .col.offset-l11 {
     margin-left: 91.6666666667%;
   }
-  .row .col.pull-l11 {
+  .row .col.pull-l11, .state .col.pull-l11, .state-error .col.pull-l11, .state-ok .col.pull-l11 {
     right: 91.6666666667%;
   }
-  .row .col.push-l11 {
+  .row .col.push-l11, .state .col.push-l11, .state-error .col.push-l11, .state-ok .col.push-l11 {
     left: 91.6666666667%;
   }
-  .row .col.offset-l12 {
+  .row .col.offset-l12, .state .col.offset-l12, .state-error .col.offset-l12, .state-ok .col.offset-l12 {
     margin-left: 100%;
   }
-  .row .col.pull-l12 {
+  .row .col.pull-l12, .state .col.pull-l12, .state-error .col.pull-l12, .state-ok .col.pull-l12 {
     right: 100%;
   }
-  .row .col.push-l12 {
+  .row .col.push-l12, .state .col.push-l12, .state-error .col.push-l12, .state-ok .col.push-l12 {
     left: 100%;
   }
 }
 @media only screen and (min-width : 1201px) {
-  .row .col.xl1 {
+  .row .col.xl1, .state .col.xl1, .state-error .col.xl1, .state-ok .col.xl1 {
     width: 8.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl2 {
+  .row .col.xl2, .state .col.xl2, .state-error .col.xl2, .state-ok .col.xl2 {
     width: 16.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl3 {
+  .row .col.xl3, .state .col.xl3, .state-error .col.xl3, .state-ok .col.xl3 {
     width: 25%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl4 {
+  .row .col.xl4, .state .col.xl4, .state-error .col.xl4, .state-ok .col.xl4 {
     width: 33.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl5 {
+  .row .col.xl5, .state .col.xl5, .state-error .col.xl5, .state-ok .col.xl5 {
     width: 41.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl6 {
+  .row .col.xl6, .state .col.xl6, .state-error .col.xl6, .state-ok .col.xl6 {
     width: 50%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl7 {
+  .row .col.xl7, .state .col.xl7, .state-error .col.xl7, .state-ok .col.xl7 {
     width: 58.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl8 {
+  .row .col.xl8, .state .col.xl8, .state-error .col.xl8, .state-ok .col.xl8 {
     width: 66.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl9 {
+  .row .col.xl9, .state .col.xl9, .state-error .col.xl9, .state-ok .col.xl9 {
     width: 75%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl10 {
+  .row .col.xl10, .state .col.xl10, .state-error .col.xl10, .state-ok .col.xl10 {
     width: 83.3333333333%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl11 {
+  .row .col.xl11, .state .col.xl11, .state-error .col.xl11, .state-ok .col.xl11 {
     width: 91.6666666667%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.xl12 {
+  .row .col.xl12, .state .col.xl12, .state-error .col.xl12, .state-ok .col.xl12 {
     width: 100%;
     margin-left: auto;
     left: auto;
     right: auto;
   }
-  .row .col.offset-xl1 {
+  .row .col.offset-xl1, .state .col.offset-xl1, .state-error .col.offset-xl1, .state-ok .col.offset-xl1 {
     margin-left: 8.3333333333%;
   }
-  .row .col.pull-xl1 {
+  .row .col.pull-xl1, .state .col.pull-xl1, .state-error .col.pull-xl1, .state-ok .col.pull-xl1 {
     right: 8.3333333333%;
   }
-  .row .col.push-xl1 {
+  .row .col.push-xl1, .state .col.push-xl1, .state-error .col.push-xl1, .state-ok .col.push-xl1 {
     left: 8.3333333333%;
   }
-  .row .col.offset-xl2 {
+  .row .col.offset-xl2, .state .col.offset-xl2, .state-error .col.offset-xl2, .state-ok .col.offset-xl2 {
     margin-left: 16.6666666667%;
   }
-  .row .col.pull-xl2 {
+  .row .col.pull-xl2, .state .col.pull-xl2, .state-error .col.pull-xl2, .state-ok .col.pull-xl2 {
     right: 16.6666666667%;
   }
-  .row .col.push-xl2 {
+  .row .col.push-xl2, .state .col.push-xl2, .state-error .col.push-xl2, .state-ok .col.push-xl2 {
     left: 16.6666666667%;
   }
-  .row .col.offset-xl3 {
+  .row .col.offset-xl3, .state .col.offset-xl3, .state-error .col.offset-xl3, .state-ok .col.offset-xl3 {
     margin-left: 25%;
   }
-  .row .col.pull-xl3 {
+  .row .col.pull-xl3, .state .col.pull-xl3, .state-error .col.pull-xl3, .state-ok .col.pull-xl3 {
     right: 25%;
   }
-  .row .col.push-xl3 {
+  .row .col.push-xl3, .state .col.push-xl3, .state-error .col.push-xl3, .state-ok .col.push-xl3 {
     left: 25%;
   }
-  .row .col.offset-xl4 {
+  .row .col.offset-xl4, .state .col.offset-xl4, .state-error .col.offset-xl4, .state-ok .col.offset-xl4 {
     margin-left: 33.3333333333%;
   }
-  .row .col.pull-xl4 {
+  .row .col.pull-xl4, .state .col.pull-xl4, .state-error .col.pull-xl4, .state-ok .col.pull-xl4 {
     right: 33.3333333333%;
   }
-  .row .col.push-xl4 {
+  .row .col.push-xl4, .state .col.push-xl4, .state-error .col.push-xl4, .state-ok .col.push-xl4 {
     left: 33.3333333333%;
   }
-  .row .col.offset-xl5 {
+  .row .col.offset-xl5, .state .col.offset-xl5, .state-error .col.offset-xl5, .state-ok .col.offset-xl5 {
     margin-left: 41.6666666667%;
   }
-  .row .col.pull-xl5 {
+  .row .col.pull-xl5, .state .col.pull-xl5, .state-error .col.pull-xl5, .state-ok .col.pull-xl5 {
     right: 41.6666666667%;
   }
-  .row .col.push-xl5 {
+  .row .col.push-xl5, .state .col.push-xl5, .state-error .col.push-xl5, .state-ok .col.push-xl5 {
     left: 41.6666666667%;
   }
-  .row .col.offset-xl6 {
+  .row .col.offset-xl6, .state .col.offset-xl6, .state-error .col.offset-xl6, .state-ok .col.offset-xl6 {
     margin-left: 50%;
   }
-  .row .col.pull-xl6 {
+  .row .col.pull-xl6, .state .col.pull-xl6, .state-error .col.pull-xl6, .state-ok .col.pull-xl6 {
     right: 50%;
   }
-  .row .col.push-xl6 {
+  .row .col.push-xl6, .state .col.push-xl6, .state-error .col.push-xl6, .state-ok .col.push-xl6 {
     left: 50%;
   }
-  .row .col.offset-xl7 {
+  .row .col.offset-xl7, .state .col.offset-xl7, .state-error .col.offset-xl7, .state-ok .col.offset-xl7 {
     margin-left: 58.3333333333%;
   }
-  .row .col.pull-xl7 {
+  .row .col.pull-xl7, .state .col.pull-xl7, .state-error .col.pull-xl7, .state-ok .col.pull-xl7 {
     right: 58.3333333333%;
   }
-  .row .col.push-xl7 {
+  .row .col.push-xl7, .state .col.push-xl7, .state-error .col.push-xl7, .state-ok .col.push-xl7 {
     left: 58.3333333333%;
   }
-  .row .col.offset-xl8 {
+  .row .col.offset-xl8, .state .col.offset-xl8, .state-error .col.offset-xl8, .state-ok .col.offset-xl8 {
     margin-left: 66.6666666667%;
   }
-  .row .col.pull-xl8 {
+  .row .col.pull-xl8, .state .col.pull-xl8, .state-error .col.pull-xl8, .state-ok .col.pull-xl8 {
     right: 66.6666666667%;
   }
-  .row .col.push-xl8 {
+  .row .col.push-xl8, .state .col.push-xl8, .state-error .col.push-xl8, .state-ok .col.push-xl8 {
     left: 66.6666666667%;
   }
-  .row .col.offset-xl9 {
+  .row .col.offset-xl9, .state .col.offset-xl9, .state-error .col.offset-xl9, .state-ok .col.offset-xl9 {
     margin-left: 75%;
   }
-  .row .col.pull-xl9 {
+  .row .col.pull-xl9, .state .col.pull-xl9, .state-error .col.pull-xl9, .state-ok .col.pull-xl9 {
     right: 75%;
   }
-  .row .col.push-xl9 {
+  .row .col.push-xl9, .state .col.push-xl9, .state-error .col.push-xl9, .state-ok .col.push-xl9 {
     left: 75%;
   }
-  .row .col.offset-xl10 {
+  .row .col.offset-xl10, .state .col.offset-xl10, .state-error .col.offset-xl10, .state-ok .col.offset-xl10 {
     margin-left: 83.3333333333%;
   }
-  .row .col.pull-xl10 {
+  .row .col.pull-xl10, .state .col.pull-xl10, .state-error .col.pull-xl10, .state-ok .col.pull-xl10 {
     right: 83.3333333333%;
   }
-  .row .col.push-xl10 {
+  .row .col.push-xl10, .state .col.push-xl10, .state-error .col.push-xl10, .state-ok .col.push-xl10 {
     left: 83.3333333333%;
   }
-  .row .col.offset-xl11 {
+  .row .col.offset-xl11, .state .col.offset-xl11, .state-error .col.offset-xl11, .state-ok .col.offset-xl11 {
     margin-left: 91.6666666667%;
   }
-  .row .col.pull-xl11 {
+  .row .col.pull-xl11, .state .col.pull-xl11, .state-error .col.pull-xl11, .state-ok .col.pull-xl11 {
     right: 91.6666666667%;
   }
-  .row .col.push-xl11 {
+  .row .col.push-xl11, .state .col.push-xl11, .state-error .col.push-xl11, .state-ok .col.push-xl11 {
     left: 91.6666666667%;
   }
-  .row .col.offset-xl12 {
+  .row .col.offset-xl12, .state .col.offset-xl12, .state-error .col.offset-xl12, .state-ok .col.offset-xl12 {
     margin-left: 100%;
   }
-  .row .col.pull-xl12 {
+  .row .col.pull-xl12, .state .col.pull-xl12, .state-error .col.pull-xl12, .state-ok .col.pull-xl12 {
     right: 100%;
   }
-  .row .col.push-xl12 {
+  .row .col.push-xl12, .state .col.push-xl12, .state-error .col.push-xl12, .state-ok .col.push-xl12 {
     left: 100%;
   }
 }
@@ -8096,6 +8096,21 @@ input[type=range]::-ms-thumb {
   float: left;
   overflow: auto;
   min-height: 4em;
+  border-style: solid;
+  border-width: 0px;
+}
+
+.state, .state-error, .state-ok {
+  display: none;
+  font-weight: bold;
+}
+
+.state-ok {
+  color: green;
+}
+
+.state-error {
+  color: red;
 }
 
 /*# sourceMappingURL=style.css.map */

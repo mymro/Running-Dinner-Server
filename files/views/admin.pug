@@ -1,7 +1,9 @@
 extends layout
 
+block stylesheets
+    link(rel='stylesheet', href='/css/tabulator.css')
+
 block content
-    p(class="row" id="timed_out" style="display:none")= text.session_timed_out
     div(class="row")
         div(class="row")
             h5(class="left")= menu.settings
@@ -12,7 +14,7 @@ block content
                         if settings.reg_open == 'true'
                             input(type="checkbox" name="settings[reg_open]" data-validate-field="reg_open" checked='checked')
                         else
-                            input(type="checkbox" name="settings[reg_open]" data-validate-field="reg_open" checked='unchecked')
+                            input(type="checkbox" name="settings[reg_open]" data-validate-field="reg_open")
                         span= text.admin.settings.reg_open
             div(class="row valign-wrapper")
                 div(class="col s2")
@@ -22,6 +24,9 @@ block content
                 label(class="col s10 valign-wrapper" id="helper" style="display:block")
 
     div(class="row")
+        span(id="team_count")= text.admin.team_count
+        div(id="users")
+    div(class="row")
         h5(class="left")= text.admin.routing
     p(calss="row")= text.admin.disclaimer
     div(class="row")
@@ -29,11 +34,14 @@ block content
                 button(class="btn waves-effect waves-light" onclick="startRouting()") #{text.admin.start_routing}
     div(class="row")
         p= text.admin.log
+        p(class="state-ok" id="ok") OK
+        p(class="state-error" id="error") ERROR
         div(class="log-box" id="log")
     
         
 
 block scripts
   script(src='/js/just-validate.js' type='application/javascript')
+  script(src='/js/tabulator.js' type='application/javascript')
   script(src='/js/admin.js' type='module')
 
