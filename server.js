@@ -399,7 +399,6 @@ app.post("/start/routing", (req, res)=>{
                 solver_state = solver_states.running;
                 let python = spawn.spawn("python", ["start_routing.py"], {
                 stdio: [ 'pipe', stream, stream]});
-                python.unref();
                 python.on('close', (code) => {
                     if(code == 0){
                         solver_state = solver_states.finished;

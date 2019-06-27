@@ -24,7 +24,7 @@ class Adress():
         self.country = country
     
     def __str__(self):
-        return '%s %s, %s %s, %s' %(self.street, str(self.doorbell), str(self.postal_code), self.city, self.country)
+        return '%s %s %s %s %s' %(self.street, str(self.doorbell), str(self.postal_code), self.city, self.country)
 
 #notes
 class Team():
@@ -128,7 +128,6 @@ class Coordinator():
                 self.distances[team1][team2] = 0
 
         adresses = [str(team.adress) for team in self.teams]
-        print(adresses)
         #The distance matrix is symmetrical with a diagonal row of 0
         #This means we only have to get the distance information for teams up to i-1 for team i
         for i in range(1, len(self.teams)):

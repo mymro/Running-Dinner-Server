@@ -28,6 +28,7 @@ try:
                 teams WHERE users.team = teams.id AND users.email_confirmed = true \
                 AND users.id=(SELECT users.id FROM users WHERE users.team = teams.id LIMIT 1)")
     rows = cur.fetchall()
+    conn.commit()
 except Exception as e:
     print(str(e))
     exit(1)
@@ -54,6 +55,7 @@ try:
                 cur.execute("""INSERT INTO groups (course, cook, team_1, team_2) VALUES(%s, %s, %s, %s)""",
                 (reverse_course_dict[course], chefs[course][group].id, members[course][group][0].id, members[course][group][1].id))
     conn.commit()
+    conn.close()
 except Exception as e:
     print(str(e))
     exit(1)

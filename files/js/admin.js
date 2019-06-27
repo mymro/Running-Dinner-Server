@@ -1,5 +1,29 @@
 import {rules, messages} from "./form_rules/admin_rules.js"
 
+class LogWatcher{
+    watchLog(){
+        if(!this.is_running){
+            this.is_running = true;
+            this.log_interval = setInterval(updateLog, 1000);
+            this.state_interval = setInterval(updateSolverState, 1000);
+            this.check_interval = setInterval(()=>{
+                if(solver_state != solver_states.running){
+                    this.stopWatchLog();
+                }
+            }, 1000)
+        }
+    }
+
+    stopWatchLog(){
+        if(this.is_running){
+            clearInterval(this.log_interval);
+            clearInterval(this.state_interval);
+            clearInterval(this.check_interval);
+            this.is_running = false;
+        }
+    }
+}
+
 const solver_states = {
     undefined: 0,
     running: 1,
@@ -7,6 +31,7 @@ const solver_states = {
     error: 3
 }
 
+let log_watcher = new LogWatcher();
 let solver_state = solver_states.undefined;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -70,21 +95,15 @@ window.startRouting = ()=>{
             document.getElementById("ok").style.display = "none";
             document.getElementById("error").style.display = "none";
 
-            let log_interval = setInterval(updateLog, 1000);
-            let state_interval = setInterval(updateSolverState, 1000);
-            let check_interval = setInterval(()=>{
-                if(solver_state != solver_states.running){
-                    clearInterval(log_interval);
-                    clearInterval(state_interval);
-                    clearInterval(check_interval);
-                }
-            }, 1000)
+            log_watcher.watchLog();
         }else if(response.status === 401){
             window.location.href="/timed/out";
-        } else {
-          alert('There was a problem with the request.');
+        }else{
+            log_watcher.stopWatchLog();
+            alert('There was a problem with the request.');
         }
     }).catch(err =>{
+        log_watcher.stopWatchLog();
         alert(err);
     })
 }
@@ -102,19 +121,24 @@ function updateLog(){
         }else if(response.status == 401){
             window.location.href="/timed/out";
         }else{
+            log_watcher.stopWatchLog();
             alert('There was a problem with the connection.');
         }
     }).catch(err=>{
+        log_watcher.stopWatchLog();
         alert(err);
     })
 }
 
 function updateSolverState(){
-    fetch("/get/solver/state", {method:"POST"})
+    return fetch("/get/solver/state", {method:"POST"})
     .then(response=>{
         if(response.status == 200){
             response.text()
             .then(state =>{
+                if(solver_state == solver_states.undefined && state == solver_states.running){
+                    log_watcher.watchLog();
+                }
                 solver_state = state;
                 let div = document.getElementById("log");
 
@@ -135,9 +159,11 @@ function updateSolverState(){
         }else if(response.status == 401){
             window.location.href="/timed/out";
         }else{
+            log_watcher.stopWatchLog();
             alert('There was a problem with the connection.');
         }
     }).catch(err=>{
+        log_watcher.stopWatchLog();
         alert(err);
     })
 }
