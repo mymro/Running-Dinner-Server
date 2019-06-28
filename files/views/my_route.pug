@@ -1,0 +1,15 @@
+extends layout.pug
+
+block content
+    div(class="row")
+        h5= text.route.your_route
+    div(class="row map" id="map")
+
+block  scripts
+    script(src='/js/my_route.js' type='application/javascript')
+    script(async defer src=`https://maps.googleapis.com/maps/api/js?key=${key}&callback=googleLoaded`)
+    script(type='application/javascript')
+        | let courses = [
+        each course in courses
+            | "#{course}",
+        | ]

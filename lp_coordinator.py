@@ -1,8 +1,11 @@
 from googlemaps import *
 from pulp import LpBinary, LpMaximize, COIN_CMD, LpProblem, LpVariable, value, lpSum
-with open('API-Key.txt') as f:
-    api_key = f.readline()
-    f.close
+import json
+
+with open("api_key.json", mode="r", encoding="utf-8") as json_file:
+        data = json.load(json_file)
+        api_key = data["geocode_matrix_key"]
+        json_file.close()
 
 
 ERROR_MULTIPLE_EVENTS = "Not all groups belonged to the same event"

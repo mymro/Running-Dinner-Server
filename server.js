@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const middleware = require('./middleware');
 const cookieParser = require('cookie-parser')
 const config = require('./config.json');
+const maps_api = require('./api_key.json');
 const bcrypt = require('bcrypt');
 const initOptions = {/* initialization options */};
 monitor.attach(initOptions);
@@ -19,6 +20,10 @@ const nodemailer = require('nodemailer');
 const smtp_auth = require('./gmailSecret')
 const settings = require('./settings');
 const ServerError = require('./server_error');
+const googleMapsClient = require('@google/maps').createClient({
+    key: maps_api.geocode_matrix_key,
+    Promise: Promise
+  });
 
 const rudi_db = pgp({
     host: config.db_host,
@@ -79,6 +84,14 @@ app.get("/", (req, res)=>{
 app.get("/login", (req, res)=>{
     let redirect = req.query.redirect
     res.render("login", {redirect: redirect});
+})
+
+app.get("/my/route", (req, res)=>{
+    if(req.isAuthenticated()){
+        res.render("my_route", {key: maps_api.maps_key, courses: courses});
+    }else{
+        res.redirect("/login");
+    }
 })
 
 app.get("/forgot/password", (req, res)=>{
@@ -186,7 +199,7 @@ app.post("/login", (req, res)=>{
                     })
                 }else{
                     res.json({
-                        "redirect":"/"
+                        "redirect":"/my/route"
                     })
                 }
             }else{
@@ -455,6 +468,116 @@ app.post("/get/users", (req, res)=>{
     }else{
         res.sendStatus(401);
     }   
+})
+
+app.post("/my/route", (req, res)=>{
+    if(req.isAuthenticated()){
+        rudi_db.task(t =>{
+            return t.any("SELECT * FROM groups WHERE cook = $1 OR team_1 = $1 OR team_2 = $1", res.locals.token.team)
+            .then(group_rows=>{
+                if(group_rows.length == 0){//there are no routes yet
+                    return {};
+                }
+                let route = {
+                    starter:{
+                        cook:{}
+                    },
+                    main:{
+                        cook:{}
+                    },
+                    dessert:{
+                        cook:{}
+                    }
+                };
+                if(group_rows.length != courses.length){
+                    throw new ServerError(500, "there are too many groups for " + res.locals.token.team);
+                }
+                //get the info about each course
+                let transactions = [];
+                group_rows.forEach(group => {
+                    transactions.push(t.one("SELECT street, doorbell, zip, city, country FROM teams where id = $1", group.cook)
+                    .then(group_info =>{
+                        route[group.course].cook.adress = group_info;
+                    }))
+                    if(group.cook == res.locals.token.team){
+                        route[group.course].cook.self = true;
+                        transactions.push(rudi_db.many("SELECT phone, email, first_name, last_name, team FROM users WHERE team = ANY(ARRAY[$1, $2]) ORDER BY team ASC", [group.team_1, group.team_2])
+                        .then(rows =>{
+                            let last_team = rows[0].team;
+                            let team = [];
+                            for(let i = 0; i < rows.length; i++){
+                                if(rows[i].team != last_team){
+                                    if(route[group.course].teams){
+                                        route[group.course].teams.push(team);
+                                    }else{
+                                        route[group.course].teams = [team];
+                                    }
+                                    team = [];
+                                    last_team = rows[i].team
+                                }
+                                team.push(rows[i]);
+                            }
+                            if(route[group.course].teams){
+                                route[group.course].teams.push(team);
+                            }else{
+                                route[group.course].teams = [team];
+                            }
+                        }))
+                    }else{
+                        route[group.course].cook.self = false;
+                        transactions.push(t.many("SELECT phone, email, first_name, last_name FROM users WHERE team = $1", group.cook)//get cook contact info
+                        .then(users =>{
+                            users.forEach(user =>{
+                                if(route[group.course].cook.contact){
+                                    route[group.course].cook.contact.push(user)
+                                }else{
+                                    route[group.course].cook.contact =[user]
+                                }
+                            })
+                        }))
+                    }
+                })
+                return t.batch(transactions)
+                .then(()=>{// get lat long
+                    let promises = []
+
+                    courses.forEach(course =>{
+                        let adress = route[course].cook.adress;
+                        promises.push(googleMapsClient.geocode({address: adress.street + ' ' + adress.doorbell + ' ' + adress.zip + ' ' + adress.city + ' ' + adress.country})
+                        .asPromise()
+                        .then((response) => {
+                            route[course].cook.adress.latLng = response.json.results[0].geometry.location;
+                        }))
+                    })
+
+                    return Promise.all(promises);
+                }).then(()=>{//get the center of those points for displaying it on a map
+                    let average_latLng = {
+                        lat: 0,
+                        lng: 0
+                    };
+
+                    courses.forEach(course=>{
+                        average_latLng.lat += route[course].cook.adress.latLng.lat;
+                        average_latLng.lng += route[course].cook.adress.latLng.lng;
+                    })
+                    average_latLng.lat /= courses.length;
+                    average_latLng.lng /= courses.length;
+                    route.map_center = average_latLng;
+
+                    return route;
+                })
+            }).then(route=>{
+                res.json(route);
+            }).catch(err =>{
+                console.error(err)
+                res.sendStatus(500);
+            })
+        })
+    }else{
+        readFile.sendStatus(401);
+    }
+
 })
 
 app.post("/valid/phone", (req, res)=>{

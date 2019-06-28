@@ -11,7 +11,9 @@
     "M": true,
     "layout":true,
 	"Tabulator":true,
-	"columns":true
+    "columns":true,
+    "courses":true,
+    "google":true
     },
     "parserOptions": {
 		"sourceType": "module",

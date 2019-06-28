@@ -2,7 +2,7 @@
 .vscode/
 node_modules/
 __pycache__/
-API-Key.txt
+api_key.json
 log.txt
 *.csv
 *.map

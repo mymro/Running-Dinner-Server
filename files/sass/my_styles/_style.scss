@@ -23,3 +23,13 @@
     @extend .state;
     color: red;
 }
+
+.map{
+    height: 60vh;
+}
+
+@media #{$medium-and-up}{
+    .map{
+        height: 65vh;
+    }
+}

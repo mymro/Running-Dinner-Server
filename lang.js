@@ -47,7 +47,8 @@ module.exports = {
             logout:"Ausloggen",
             console:"Mein Account",
             admin:"Admin",
-            settings:"Einstellungen"
+            settings:"Einstellungen",
+            route:"Meine Route"
         },
         buttons:{
             request_new_confirmation_label:'Neue Bestätigungsmail anfordern'
@@ -83,6 +84,9 @@ module.exports = {
                 start_routing:"Den Routingprozess starten",
                 disclaimer:"Bevor du den Routingprozess startest solltest du dich vergewissern, dass sich keine neuen teams mehr anmelden und ihre Daten ändern können (siehe oben unter Einstellungen).",
                 team_count:"Soviele Teams sind fertig registriert (mindestens eine Email bestätigt): "
+            },
+            route:{
+                your_route:"Deine Route:"
             }
         }
     }

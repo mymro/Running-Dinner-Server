@@ -22,9 +22,10 @@ html
               if token.role == 'admin'
                 li 
                   a(href="/admin")= menu.admin
-              else
-                li
-                  a(href='#')= menu.console
+              li
+                a(href='#')= menu.console
+              li
+                a(href='/my/route')= menu.route
             else
               li
                 a(href='/login')= menu.login
@@ -41,9 +42,10 @@ html
         if token.role == 'admin'
           li 
             a(href="/admin")= menu.admin
-        else
-          li
-            a(href='#')= menu.console
+        li
+          a(href='#')= menu.console
+        li
+          a(href='/my/route')= menu.route
       else
         li
           a(href='/login')= menu.login
