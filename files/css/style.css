@@ -8114,13 +8114,16 @@ input[type=range]::-ms-thumb {
 }
 
 .map {
-  height: 60vh;
+  height: 50vh;
 }
 
 @media only screen and (min-width : 601px) {
   .map {
-    height: 65vh;
+    height: 60vh;
   }
+}
+#template {
+  display: none;
 }
 
 /*# sourceMappingURL=style.css.map */

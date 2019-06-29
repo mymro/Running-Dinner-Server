@@ -90,7 +90,7 @@ app.get("/my/route", (req, res)=>{
     if(req.isAuthenticated()){
         res.render("my_route", {key: maps_api.maps_key, courses: courses});
     }else{
-        res.redirect("/login");
+        res.redirect("/timed/out");
     }
 })
 
@@ -100,7 +100,7 @@ app.get("/forgot/password", (req, res)=>{
 
 app.get("/register", (req, res)=>{
     if(res.locals.settings.reg_open == 'true'){
-        res.render("register", {country: config.countryString})
+        res.render("register", {country: config.countryString, courses: courses})
     }else{
         res.sendStatus(403);
     }
@@ -501,26 +501,44 @@ app.post("/my/route", (req, res)=>{
                     }))
                     if(group.cook == res.locals.token.team){
                         route[group.course].cook.self = true;
-                        transactions.push(rudi_db.many("SELECT phone, email, first_name, last_name, team FROM users WHERE team = ANY(ARRAY[$1, $2]) ORDER BY team ASC", [group.team_1, group.team_2])
-                        .then(rows =>{
-                            let last_team = rows[0].team;
-                            let team = [];
-                            for(let i = 0; i < rows.length; i++){
-                                if(rows[i].team != last_team){
+
+                        transactions.push(Promise.all([
+                            rudi_db.many("SELECT phone, email, first_name, last_name, team as team_id FROM users WHERE team = ANY(ARRAY[$1, $2]) ORDER BY team ASC", [group.team_1, group.team_2]),
+                            rudi_db.many("SELECT notes FROM teams WHERE id = ANY(ARRAY[$1, $2]) ORDER BY id ASC", [group.team_1, group.team_2])
+                        ]).then(result =>{
+                            let users = result[0];
+                            let teams = result[1];
+                            let notes_id = 0;
+                            let last_team_id = users[0].team_id;
+                            let members = [];
+                            for(let i = 0; i < users.length; i++){
+                                if(users[i].team_id != last_team_id){
                                     if(route[group.course].teams){
-                                        route[group.course].teams.push(team);
+                                        route[group.course].teams.push({
+                                            members: members,
+                                            notes : teams[notes_id++].notes
+                                        });
                                     }else{
-                                        route[group.course].teams = [team];
+                                        route[group.course].teams = [{
+                                            members: members,
+                                            notes : teams[notes_id++].notes
+                                        }];
                                     }
-                                    team = [];
-                                    last_team = rows[i].team
+                                    members = [];
+                                    last_team_id = users[i].team_id
                                 }
-                                team.push(rows[i]);
+                                members.push(users[i]);
                             }
                             if(route[group.course].teams){
-                                route[group.course].teams.push(team);
+                                route[group.course].teams.push({
+                                    members: members,
+                                    notes : teams[notes_id++].notes
+                                });
                             }else{
-                                route[group.course].teams = [team];
+                                route[group.course].teams = [{
+                                    members: members,
+                                    notes : teams[notes_id++].notes
+                                }];
                             }
                         }))
                     }else{

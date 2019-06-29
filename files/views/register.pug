@@ -20,9 +20,8 @@ mixin course_select(name, label)
   div(class='input-field row')
     select(name=name id=name data-validate-field=name)
       option(value="" selected disabled hidden)= forms.please_select
-      option(value="starter")= forms.course_starter
-      option(value="main")= forms.course_main
-      option(value="dessert")= forms.course_dessert
+      each course in courses
+        option(value=`${course}`)= forms["course_" + course]
     label= label
 
 block content

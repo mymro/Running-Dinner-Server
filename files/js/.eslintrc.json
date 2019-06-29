@@ -13,7 +13,8 @@
 	"Tabulator":true,
     "columns":true,
     "courses":true,
-    "google":true
+    "google":true,
+    "translation":true
     },
     "parserOptions": {
 		"sourceType": "module",

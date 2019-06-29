@@ -16,7 +16,6 @@ teams = []
 try:
     with open("config.json", mode="r", encoding="utf-8") as json_file:
         data = json.load(json_file)
-        json_file.close()
 except Exception as e:
     print(str(e))
     exit(1)

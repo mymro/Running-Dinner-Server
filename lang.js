@@ -3,6 +3,7 @@ module.exports = {
         lang:"de",
         email_confirmed:"Email bestätigt",
         team:"Team",
+        cooks:"Köche",
         preferred_course:"Bevorzugter Gang",
         disliked_course:"nicht Bevorzugter Gang",
         saved:"Gespeichert",

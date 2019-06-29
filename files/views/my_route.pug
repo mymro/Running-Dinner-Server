@@ -2,14 +2,51 @@ extends layout.pug
 
 block content
     div(class="row")
-        h5= text.route.your_route
+        h4= text.route.your_route
     div(class="row map" id="map")
+
+    div(id="template")
+        div(class="course")
+            div(clas="row")
+                h4(class="course")
+                div(class="adress_container")
+                div(class="teams_container")
+
+        ul(class="adress")
+            li(class="street")= forms.street + ': '
+            li(class="doorbell")= forms.doorbell + ': '
+            li(class="city")= forms.city + ': '
+            li(class="zip")= forms.zip + ': '
+
+
+        div(class="team")
+            h5(class="team_name")= team  
+            div(class="members_container")  
+            div(class="notes_container")
+
+        ul(class="member")
+            li(class="first_name")= forms.first_name + ': '
+            li(class="last_name")= forms.last_name + ': '
+            li(class="phone")= forms.phone_number + ': '
+            li(class="email")= forms.email + ': '
+
+        div(class="notes")
+            h5= forms.notes
+            p(class="notes_content")
+
+
 
 block  scripts
     script(src='/js/my_route.js' type='application/javascript')
-    script(async defer src=`https://maps.googleapis.com/maps/api/js?key=${key}&callback=googleLoaded`)
+    //script(async defer src=`https://maps.googleapis.com/maps/api/js?key=${key}&callback=googleLoaded`)
     script(type='application/javascript')
         | let courses = [
         each course in courses
             | "#{course}",
-        | ]
+        | ];
+        | let translation = {
+        each course in courses
+            | #{course}: "#{forms[`course_${course}`]}",
+        | "team": "#{team}",
+        | "cooks": "#{cooks}"
+        | }
