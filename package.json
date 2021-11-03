@@ -25,7 +25,7 @@
     "pg-monitor": "^1.1.0",
     "pg-promise": "^8.7.2",
     "pug": "^2.0.4",
-    "validator": "^11.0.0"
+    "validator": "^13.7.0"
   },
   "nodemonConfig": {
     "ext": "pug js json",
